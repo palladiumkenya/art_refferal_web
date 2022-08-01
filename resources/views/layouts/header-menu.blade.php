@@ -16,7 +16,7 @@
                     <div class="dropdown-menu text-left" aria-labelledby="dropdownMenuButton">
                         <div class="row m-0">
                             <div class="col-md-4 p-4 bg-img">
-                                <h2 class="title">Mega Menu <br> Sidebar</h2>
+                                <h2 class="title">Main Menu <br> Sidebar</h2>
                                 <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Asperiores natus laboriosam fugit, consequatur.
                                 </p>
                                 <p class="mb-4">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem odio amet eos dolore suscipit placeat.</p>
@@ -54,10 +54,10 @@
                     </div>
                 </div>
                 <!-- / Mega menu -->
-                <div class="search-bar">
+                <!-- <div class="search-bar">
                     <input type="text" placeholder="Search">
                     <i class="search-icon text-muted i-Magnifi-Glass1"></i>
-                </div>
+                </div> -->
             </div>
 
             <div style="margin: auto"></div>

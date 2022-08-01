@@ -7,7 +7,7 @@
 
 
 
-    @include('layouts.horizontal-bar.menu')
+
 
     <!-- ============ end of left sidebar ============= -->
 
