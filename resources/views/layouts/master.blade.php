@@ -121,7 +121,7 @@
         <!-- ============ Search UI End ============= -->
 
         <!-- ============ Customizer UI Start ============= -->
-    
+        @include('layouts.common.customizer')
         <!-- ============ Customizer UI Start ============= -->
 
 
