@@ -16,9 +16,6 @@
 
 
 
-
-
-
         @if (Session::get('layout') == 'vertical')
         <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome-free-5.10.1-web/css/all.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/styles/vendor/metisMenu.min.css') }}">
@@ -60,7 +57,7 @@
         <!-- ============ Compact Layout start ============= -->
         @if ($layout == 'compact')
 
-        @include('layouts.compact-vertical-sidebar.master')
+
 
 
         <!-- ============ Compact Layout End ============= -->
@@ -85,7 +82,7 @@
         <!-- ============ Vetical SIdebar Layout start ============= -->
         @elseif($layout=="vertical")
 
-        @include('layouts.vertical-sidebar.master')
+
 
         <!-- ============ Vetical SIdebar Layout End ============= -->
 
@@ -96,7 +93,7 @@
         @elseif($layout=="normal")
 
 
-        @include('layouts.large-vertical-sidebar.master')
+
 
 
         <!-- ============ Large Sidebar Layout End ============= -->
@@ -108,7 +105,7 @@
         @else
         <!-- ============Deafult  Large SIdebar Layout start ============= -->
 
-        @include('layouts.large-vertical-sidebar.master')
+
 
 
         <!-- ============ Large Sidebar Layout End ============= -->
