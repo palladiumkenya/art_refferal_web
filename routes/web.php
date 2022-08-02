@@ -24,20 +24,20 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', function () {
-    return view('dashboard.dashboardv1');
-});
+    return view('auth.login');
+  });
+
+// Route::get('/', function () {
+//     return view('dashboard.dashboardv1');
+// });
 // Route::view('/', 'starter')->name('starter');
+Auth::routes();
+Route::post('/login', ['uses' => 'App\Http\Controllers\Auth\LoginController@login', 'as' => 'login']);
+// Route::group(['middleware' => 'auth'], function () {
 
-
-// sessions
-Route::view('sessions/signIn', 'sessions.signIn')->name('signIn');
-Route::view('sessions/signUp', 'sessions.signUp')->name('signUp');
-Route::view('sessions/forgot', 'sessions.forgot')->name('forgot');
-
-// Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/add/user', ['uses' => 'App\Http\Controllers\UserController@adduser', 'as' => 'adduser']);
+Route::post('/add/user', ['uses' => 'App\Http\Controllers\UserController@adduser', 'as' => 'adduser']);
+Route::post('/edit/user', ['uses' => 'App\Http\Controllers\UserController@edituser', 'as' => 'edituser']);
+Route::get('/add/user/form', ['uses' => 'App\Http\Controllers\UserController@adduserform', 'as' => 'adduserform']);
+Route::get('/user', ['uses' => 'App\Http\Controllers\UserController@user', 'as' => 'user']);
+// });
