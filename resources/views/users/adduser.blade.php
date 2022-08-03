@@ -28,6 +28,10 @@
                             <input class="form-control" id="phone" name="phone" placeholder="Enter phone">
                         </div>
                         <div class="col-md-6 form-group mb-3">
+                            <label for="exampleInputEmail1">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
                             <label for="mflcode">Facility</label>
                             <select class="form-control" data-width="100%" id="mflcode" name="mflcode">
                                 <option value="">Please select </option>

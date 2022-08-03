@@ -36,6 +36,8 @@ class UserController extends Controller
             $user = new User;
             $user->password = bcrypt($request->phone);
             $user->person_id =  $pid;
+            $user->email = $request->email;
+            $user->username = $request->firstname;
             $person->created_date = date('Y-m-d H:i:s');
             $user->save();
 
@@ -47,6 +49,8 @@ class UserController extends Controller
             $person->created_date = date('Y-m-d H:i:s');
             $person->updated_date = date('Y-m-d H:i:s');
             $provider->save();
+
+            return redirect('user');
         } catch (Exception $e) {
         }
     }
@@ -91,6 +95,37 @@ class UserController extends Controller
             $person->updated_date = date('Y-m-d H:i:s');
             $provider->save();
         } catch (Exception $e) {
+        }
+    }
+    public function resetuser(Request $request)
+    {
+        try {
+            $user = User::find($request->id);
+            $user->password = bcrypt($user->username);
+            $user->updated_at = date('Y-m-d H:i:s');
+          //  $user->updated_by = Auth::user()->id;
+
+            if ($user->save()) {
+                return redirect('user')->with('status', 'User has been reset successfull');
+            } else {
+                Session::flash('statuscode', 'error');
+                return back();
+            }
+        } catch (Exception $e) {
+            return back();
+        }
+    }
+    public function deleteuser(Request $request)
+    {
+        try{
+            $user = User::where('id', $request->id)
+            ->update([
+                'is_active' => '0',
+                'updated_date' =>  date('Y-m-d H:i:s'),
+            ]);
+
+        }catch(Exception $e){
+
         }
     }
 }

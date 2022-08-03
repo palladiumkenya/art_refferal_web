@@ -19,7 +19,7 @@
                         <div class="col-md-4 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
-                                <a href="#"><i class="i-Shop-4"></i> Home</a>
+                                <a href="{{route('home')}}"><i class="i-Shop-4"></i> Home</a>
                                 <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
                                 <a href="#"><i class="i-Drop"></i> Apps</a>
 
@@ -64,7 +64,7 @@
                             <i class="i-Lock-User mr-1"></i>
                         </div>
                         <a class="dropdown-item">Account settings</a>
-                        <a class="dropdown-item" href="#">Sign out</a>
+                        <a class="dropdown-item" href="{{route('logout')}}">Sign out</a>
                     </div>
                 </div>
             </div>

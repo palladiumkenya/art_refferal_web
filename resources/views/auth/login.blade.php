@@ -24,8 +24,8 @@
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="form-group">
-                                    <label for="phone">Username</label>
-                                    <input id="phone" class="form-control form-control-rounded @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" required autocomplete="phone" autofocus>
+                                    <label for="email">Username</label>
+                                    <input id="email" class="form-control form-control-rounded @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
