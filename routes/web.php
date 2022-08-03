@@ -28,6 +28,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('dashboard.dashboardv1');
 });
+Route::get('/table', function () {
+    return view('datatables.buttons');
+});
 // Route::view('/', 'starter')->name('starter');
 
 
@@ -41,3 +44,11 @@ Route::view('sessions/forgot', 'sessions.forgot')->name('forgot');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/add/user', ['uses' => 'App\Http\Controllers\UserController@adduser', 'as' => 'adduser']);
+
+Route::get('/patients', ['uses' => 'App\Http\Controllers\PatientController@index', 'as' => 'patients.list']);
+
+Route::get('patients/create', ['uses' => 'App\Http\Controllers\PatientController@create', 'as' => 'patients.create']);
+
+Route::post('patients/store', ['uses' => 'App\Http\Controllers\PatientController@store', 'as' => 'patients.store']);
+
+Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
