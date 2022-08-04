@@ -5,6 +5,7 @@
 @endsection
 
 @section('main-content')
+@include('sweetalert::alert')
 <div class="row">
     <div class="col-md-12">
         <div class="card mb-4">
@@ -15,25 +16,40 @@
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label for="firstname">First name</label>
-                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name" value="{{ old('firstname') }}">
+                            @error('firstname')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
                             <label for="middlename">Middle name</label>
-                            <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter middle name">
+                            <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter middle name" value="{{ old('middlename') }}">
+                            @error('middlename')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6 form-group mb-3">
                             <label for="lastname">Last name</label>
-                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name">
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name" value="{{ old('lastname') }}">
+                            @error('lastname')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
                             <label for="phone">Phone</label>
-                            <input class="form-control" id="phone" name="phone" placeholder="Enter phone">
+                            <input class="form-control" id="phone" name="phone" placeholder="Enter phone" value="{{ old('phone') }}">
+                            @error('phone')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6 form-group mb-3">
                             <label for="exampleInputEmail1">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="{{ old('email') }}">
+                            @error('email')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-6 form-group mb-3">
                             <label for="mflcode">Facility</label>
@@ -45,6 +61,9 @@
                                 @endforeach
                                 @endif
                             </select>
+                            @error('mflcode')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                     </div>

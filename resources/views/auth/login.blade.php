@@ -41,17 +41,7 @@
                                     </span>
                                     @enderror
                                 </div>
-                                <div class="form-group ">
-                                    <div class="">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
-                                            <label class="form-check-label" for="remember">
-                                                {{ __('Remember Me') }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <button class="btn btn-rounded btn-primary btn-block mt-2">Sign In</button>
 
@@ -60,7 +50,7 @@
 
                             <div class="mt-3 text-center">
 
-                                <a href="{{ route('password.request') }}" class="text-muted"><u>Forgot
+                                <a href="{{ route('forgot') }}" class="text-muted"><u>Forgot
                                         Password?</u></a>
                             </div>
                             @endif

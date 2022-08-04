@@ -9,11 +9,16 @@ class Person extends Model
 {
     use HasFactory;
     public $table = 'tbl_person';
-    public $timestamps = false;
+
+    protected $primaryKey = 'person_id';
 
     protected $fillable = [
-        'firstname', 'lastname', 'created_date', 'created_by', 'updated_date',
+        'firstname',
+        'middlename',
+        'lastname',
     ];
+
+
 
     public function user()
     {
@@ -24,4 +29,5 @@ class Person extends Model
     {
         return $this->hasOne(Provider::class, 'person_id');
     }
+
 }

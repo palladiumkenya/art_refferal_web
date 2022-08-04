@@ -5,7 +5,7 @@
 @endsection
 
 @section('main-content')
-
+@include('sweetalert::alert')
 <div class="col-md-12 mb-4">
     <div class="card text-left">
 
@@ -72,6 +72,7 @@
                                 {{ csrf_field() }}
                                 <div class="row">
                                     <input type="hidden" name="id" id="id">
+                                    <input type="hidden" name="person_id" id="person_id">
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstname">First name</label>
                                         <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
@@ -121,6 +122,29 @@
     </div>
 
 </div>
+
+<div id="DeleteModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Disable User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to Disable this user?.</p>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button id="delete" type="button" class="btn btn-danger" data-person_id="">Disable</button>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="ResetModal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -160,6 +184,7 @@
         $('#mflcode').val(user.code);
         $('#email').val(user.email);
         $('#id').val(user.id);
+        $('#person_id').val(user.person_id);
     }
 
     function resetUser(uid) {
@@ -174,8 +199,26 @@
                 },
                 dataType: "json",
                 success: function(data) {
-                    toastr.success(data.details);
                     $('#ResetModal').modal('hide');
+                }
+            })
+        });
+    }
+
+    function deleteUser(uid) {
+        $('#DeleteModal').modal('show');
+        console.log(uid);
+        $(document).off("click", "#delete").on("click", "#delete", function(event) {
+            $.ajax({
+                type: "POST",
+                url: '/delete/user',
+                data: {
+                    "uid": uid,
+                    "_token": "{{ csrf_token()}}"
+                },
+                dataType: "json",
+                success: function(data) {
+                    $('#DeleteModal').modal('hide');
                 }
             })
         });
