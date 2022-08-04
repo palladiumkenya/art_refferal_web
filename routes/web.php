@@ -36,15 +36,18 @@ Route::get('/', function () {
 Auth::routes();
 
 // Route::middleware(['guest'])->group(function(){
-   // Route::post('/login', ['uses' => 'App\Http\Controllers\Auth\LoginController@login', 'as' => 'login']);
+// Route::post('/login', ['uses' => 'App\Http\Controllers\Auth\LoginController@login', 'as' => 'login']);
 // });
 // Route::group(['middleware' => 'auth'], function () {
-    Route::get('/logout', ['uses' => 'App\Http\Controllers\Auth\LoginController@logout', 'as' => 'logout']);
-    
-    Route::post('/add/user', ['uses' => 'App\Http\Controllers\UserController@adduser', 'as' => 'adduser']);
-    Route::post('/edit/user', ['uses' => 'App\Http\Controllers\UserController@edituser', 'as' => 'edituser']);
-    Route::get('/add/user/form', ['uses' => 'App\Http\Controllers\UserController@adduserform', 'as' => 'adduserform']);
-    Route::get('/user', ['uses' => 'App\Http\Controllers\UserController@user', 'as' => 'user']);
+Route::get('/logout', ['uses' => 'App\Http\Controllers\Auth\LoginController@logout', 'as' => 'logout']);
 
-    Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
+Route::get('/user', ['uses' => 'App\Http\Controllers\UserController@user', 'as' => 'user']);
+Route::get('/add/user/form', ['uses' => 'App\Http\Controllers\UserController@adduserform', 'as' => 'adduserform']);
+Route::post('/add/user', ['uses' => 'App\Http\Controllers\UserController@adduser', 'as' => 'adduser']);
+Route::post('/edit/user', ['uses' => 'App\Http\Controllers\UserController@edituser', 'as' => 'edituser']);
+Route::post('/reset/user', ['uses' => 'App\Http\Controllers\UserController@resetuser', 'as' => 'resetuser']);
+
+
+
+Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
 // });

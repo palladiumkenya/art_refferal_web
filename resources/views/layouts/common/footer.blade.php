@@ -10,9 +10,9 @@
 
         <span class="flex-grow-1"></span>
         <div class="d-flex align-items-center">
-            
+
             <div>
-                <p class="m-0">&copy; 2019 </p>
+                <p class="m-0">&copy; <?php echo date('Y'); ?> </p>
                 <p class="m-0">All rights reserved</p>
             </div>
         </div>

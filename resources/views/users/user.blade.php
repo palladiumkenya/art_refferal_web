@@ -32,13 +32,13 @@
                         @foreach($user as $user)
                         <tr>
                             <td> {{ $loop->iteration }}</td>
-                            <td> {{ ucwords($user->firstname)}} {{ ucwords($user->lastname)}}</td>
+                            <td> {{ ucwords($user->firstname)}} {{ ucwords($user->middlename)}} {{ ucwords($user->lastname)}}</td>
                             <td> {{$user->phone}}</td>
                             <td> {{$user->facility}}</td>
                             <td> {{$user->code}}</td>
                             <td>
                                 <button onclick="editUser({{$user}});" data-toggle="modal" data-target="#editUser" type="button" class="btn btn-primary btn-sm">Edit</button>
-                                <button onclick="deleteUser({{$user->id}});" type="button" class="btn btn-danger btn-sm">Delete</button>
+                                <button onclick="deleteUser({{$user->id}});" type="button" class="btn btn-danger btn-sm">Disable</button>
                                 <button onclick="resetUser({{$user->id}});" type="button" class="btn btn-success btn-sm">Reset</button>
 
                             </td>
@@ -74,17 +74,25 @@
                                     <input type="hidden" name="id" id="id">
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstname">First name</label>
-                                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name">
+                                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
+                                        <label for="middlename">Middle name</label>
+                                        <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter last name">
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
                                         <label for="lastname">Last name</label>
-                                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name">
+                                        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name">
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="phone">Phone</label>
                                         <input class="form-control" id="phone" name="phone" placeholder="Enter phone">
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="exampleInputEmail1">Email address</label>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
                                     </div>
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="mflcode">Facility</label>
@@ -112,7 +120,27 @@
 
     </div>
 
+</div>
+<div id="ResetModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reset User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reset this user's password?.</p>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button id="reset" type="button" class="btn btn-success" data-person_id="">Reset</button>
+            </div>
+            <div class="modal-footer">
 
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -128,8 +156,29 @@
         $('#phone').val(user.phone);
         $('#firstname').val(user.firstname);
         $('#lastname').val(user.lastname);
+        $('#middlename').val(user.middlename);
         $('#mflcode').val(user.code);
+        $('#email').val(user.email);
         $('#id').val(user.id);
+    }
+
+    function resetUser(uid) {
+        $('#ResetModal').modal('show');
+        $(document).off("click", "#reset").on("click", "#reset", function(event) {
+            $.ajax({
+                type: "POST",
+                url: '/reset/user',
+                data: {
+                    "uid": uid,
+                    "_token": "{{ csrf_token()}}"
+                },
+                dataType: "json",
+                success: function(data) {
+                    toastr.success(data.details);
+                    $('#ResetModal').modal('hide');
+                }
+            })
+        });
     }
 </script>
 

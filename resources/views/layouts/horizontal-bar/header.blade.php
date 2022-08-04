@@ -21,7 +21,7 @@
                             <div class="menu-icon-grid w-auto p-0">
                                 <a href="{{route('home')}}"><i class="i-Shop-4"></i> Home</a>
                                 <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
-                                <a href="#"><i class="i-Drop"></i> Apps</a>
+                                <a href="#"><i class="i-Drop"></i> Roles</a>
 
                             </div>
                         </div>
@@ -57,7 +57,7 @@
             <!-- User avatar dropdown -->
             <div class="dropdown">
                 <div class="user col align-self-end">
-                    <img src="{{asset('assets/images/faces/1.jpg')}}" id="userDropdown" alt="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="{{asset('assets/images/profile.png')}}" id="userDropdown" alt="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <div class="dropdown-header">

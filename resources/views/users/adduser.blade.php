@@ -15,12 +15,16 @@
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label for="firstname">First name</label>
-                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name">
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter first name">
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
+                            <label for="middlename">Middle name</label>
+                            <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter middle name">
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
                             <label for="lastname">Last name</label>
-                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name">
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter last name">
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
