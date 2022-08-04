@@ -9,6 +9,7 @@ class Person extends Model
 {
     use HasFactory;
     public $table = 'tbl_person';
+
     protected $primaryKey = 'person_id';
 
     protected $fillable = [
@@ -16,4 +17,17 @@ class Person extends Model
         'middlename',
         'lastname',
     ];
+
+
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'person_id');
+    }
+
+    public function provider()
+    {
+        return $this->hasOne(Provider::class, 'person_id');
+    }
+
 }

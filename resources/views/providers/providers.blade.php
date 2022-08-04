@@ -8,7 +8,7 @@
   <div class="breadcrumb">
                 <h1>Providers</h1>
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><a href="/home">Home</a></li>
                     <li>Providers</li>
                 </ul>
             </div>
@@ -20,7 +20,7 @@
                     <div class="card text-left">
 
                         <div class="card-body">
-                            <button type="button" onclick="window.location='{{ route("patients.create") }}'" class="btn btn-primary ripple m-1">Add Record</button>
+                            <button type="button" onclick="window.location='{{ route("patients.create") }}'" class="btn btn-primary ripple m-1">Add Provider</button>
                             <button type="button" onclick="window.location='{{ route("patients.create") }}'" class="btn btn-primary ripple m-1">Upload List</button>
 
                             <div class="table-responsive">

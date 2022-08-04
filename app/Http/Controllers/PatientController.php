@@ -41,7 +41,7 @@ class PatientController extends Controller
             'firstname' => ['required', 'string', 'max:150'],
             'middlename' => ['max:150'],
             'lastname' => ['required', 'string', 'max:150'],
-            'ccc_no' => ['required', 'numeric', 'unique:tbl_patient'],
+            'ccc_no' => ['required', 'string', 'unique:tbl_patient'],
             'upi' => ['string', 'max:45'],
             'facility' => ['required', 'numeric'],
             'date_of_birth' => ['required', ],

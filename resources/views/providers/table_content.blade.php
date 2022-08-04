@@ -14,22 +14,10 @@
                                                         <td>{{ $providers->msisdn }}</td>
                                                         <td>{{ $providers->facility }}</td>
                                                         <td>
-                                                            <a href="#" class="text-success mr-2">
-                                                                <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                            </a>
-                                                            <a href="#" class="text-danger mr-2">
-                                                                <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                            </a>
+                                                            <button  data-toggle="modal" data-target="#editUser" type="button" class="btn btn-primary btn-sm">Edit</button>
+                                                            <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                         </tr>
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Mobile No.</th>
-                                            <th>Facility</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>

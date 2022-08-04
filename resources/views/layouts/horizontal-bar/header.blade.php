@@ -19,10 +19,9 @@
                         <div class="col-md-4 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
-                                <a href="/"><i class="i-Shop-4"></i> Home</a>
+                                <a href="/home"><i class="i-Shop-4"></i> Home</a>
                                 <a href="{{route('patients.list')}}"><i class="i-Drop"></i> Patients</a>
                                 <a href="{{route('providers.list')}}"><i class="i-Drop"></i> Providers</a>
-
                             </div>
                         </div>
                     </div>
@@ -36,7 +35,7 @@
                         <div class="col-md-4 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
-                                <a href="{{route('adduser')}}"><i class="i-Library"></i> Users</a>
+                                <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
                             </div>
                         </div>
                     </div>
@@ -70,7 +69,7 @@
                             <i class="i-Lock-User mr-1"></i>
                         </div>
                         <a class="dropdown-item">Account settings</a>
-                        <a class="dropdown-item" href="{{route('signIn')}}">Sign out</a>
+                        <a class="dropdown-item" href="{{route('logout')}}">Sign out</a>
                     </div>
                 </div>
             </div>
