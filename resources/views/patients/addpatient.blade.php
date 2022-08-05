@@ -6,12 +6,29 @@
 @endsection
 
 @section('main-content')
+<!-- @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif -->
+<div class="breadcrumb">
+<h1>Add Patient Record</h1>
+    <ul>
+        <li><a href="{{route('patients.list')}}">&lt;&lt;Back</a></li>
+    </ul>
+</div>
+<div class="separator-breadcrumb border-top"></div>
+            {{-- end of breadcrumb --}}
+<form role="form" method="post" action="{{route('patients.store')}}">
 <div class="row">
     <div class="col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title mb-3">Add Patient</div>
-                <form role="form" method="post" action="{{route('patients.store')}}">
+                <div class="card-title mb-3">Patient Bio</div>
                     {{ csrf_field() }}
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
@@ -71,6 +88,25 @@
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
+                            <label for="art_start_date">ART Start Date</label>
+                            <input id="art_start_date" class="form-control" placeholder="dd-mm-yyyy" name="art_start_date" value="{{ old('art_start_date') }}" >
+                            @error('art_start_date')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="card-title mb-3">Patient Observations & Facility</div>
+                    <div class="row">
+
+                        <div class="col-md-6 form-group mb-3">
                             <label for="facilityname">Facility</label>
                             <select class="form-control" data-width="100%" id="facility" name="facility">
                                 <option value="">Please select </option>
@@ -86,9 +122,9 @@
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
-                            <label for="art_start_date">ART Start Date</label>
-                            <input id="art_start_date" class="form-control" placeholder="dd-mm-yyyy" name="art_start_date" value="{{ old('art_start_date') }}" >
-                            @error('art_start_date')
+                            <label for="from_date">Facility Care Start Date</label>
+                            <input id="from_date" class="form-control" placeholder="dd-mm-yyyy" name="from_date" value="{{ old('from_date') }}" >
+                            @error('from_date')
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -112,18 +148,18 @@
                         <div class="col-md-6 form-group mb-3">
                             <label for="tca">TCA</label>
                             <input id="tca" class="form-control" placeholder="dd-mm-yyyy" name="tca" value="{{ old('tca') }}" >
-                            @error('tca')
+                            @error('art_start_date')
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                     </div>
                     <button type="submit" class="btn btn-block btn-primary">Submit</button>
-                </form>
             </div>
         </div>
     </div>
 </div>
+</form>
 
 @endsection
 

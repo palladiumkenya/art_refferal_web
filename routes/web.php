@@ -63,6 +63,10 @@ Route::get('/patients', ['uses' => 'App\Http\Controllers\PatientController@index
 
 Route::get('patients/create', ['uses' => 'App\Http\Controllers\PatientController@create', 'as' => 'patients.create']);
 
+Route::get('patients/import', ['uses' => 'App\Http\Controllers\PatientController@import', 'as' => 'patients.import']);
+
+Route::post('patients/upload', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.upload']);
+
 Route::post('patients/store', ['uses' => 'App\Http\Controllers\PatientController@store', 'as' => 'patients.store']);
 
 Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);

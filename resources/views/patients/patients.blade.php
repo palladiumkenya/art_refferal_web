@@ -5,36 +5,53 @@
 @endsection
 
 @section('main-content')
-  <div class="breadcrumb">
-                <h1>Patients</h1>
-                <ul>
-                    <li><a href="/home">Home</a></li>
-                    <li>Patients</li>
-                </ul>
+<div class="col-md-12 mb-4">
+    <div class="card text-left">
+
+        <div class="card-body">
+            <h4 class="card-title mb-3">{{count($patients)}} Patients</h4>
+
+            <div style="margin-bottom:10px; ">
+                <a type="button" href="{{route('patients.create')}}" class="btn btn-primary btn-md pull-right">Add Patient</a>
+                <a type="button" href="{{route('patients.import')}}" class="btn btn-primary btn-md pull-right">Upload List</a>
             </div>
-            <div class="separator-breadcrumb border-top"></div>
-
-            <div class="row mb-4">
-
-                <div class="col-md-12 mb-4">
-                    <div class="card text-left">
-
-                        <div class="card-body">
-                            <button type="button" onclick="window.location='{{ route("patients.create") }}'" class="btn btn-primary ripple m-1">Add Patient</button>
-                            <button type="button" onclick="window.location='{{ route("patients.create") }}'" class="btn btn-primary ripple m-1">Upload List</button>
-
-                            <div class="table-responsive">
-                                <table id="alternative_pagination_table" class="display table table-striped table-bordered" style="width:100%">
-                            @include('patients.table_content')
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <!-- end of col -->
+            <div class="table-responsive">
+                <table id="multicolumn_ordering_table" class="display table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>CCC No.</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Facility</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (count($patients) > 0)
+                        @foreach($patients as $patient)
+                        <tr>
+                            <td> {{ $loop->iteration }}</td>
+                            <td> {{$patient->ccc_no}}</td>
+                            <td> {{ ucwords($patient->firstname)}} {{ ucwords($patient->middlename)}} {{ ucwords($patient->lastname)}}</td>
+                            <td> {{$patient->msidn}}</td>
+                            <td> {{$patient->facility}}</td>
+                            <td>
+                                <button onclick="editUser({{$patient->person_id}});" data-toggle="modal" data-target="#editUser" type="button" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteUser({{$patient->person_id}});" type="button" class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
             </div>
-            <!-- end of row -->
+
+        </div>
+    </div>
+</div>
+<!-- end of col -->
+
 
 
 

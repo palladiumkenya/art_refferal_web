@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>ART Refferal</title>
+    <title>ART Referral</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet">
@@ -17,7 +17,7 @@
     {{-- theme css --}}
 
     <link rel="stylesheet" href="{{asset('assets/styles/css/themes/lite-blue.min.css')}}">
-    
+
     <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">
     {{-- page specific css --}}
     @yield('page-css')
