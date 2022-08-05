@@ -19,9 +19,11 @@
                         <div class="col-md-4 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
+
                                 <a href="/home"><i class="i-Shop-4"></i> Home</a>
                                 <a href="{{route('patients.list')}}"><i class="i-Drop"></i> Patients</a>
                                 <a href="{{route('providers.list')}}"><i class="i-Drop"></i> Providers</a>
+
                             </div>
                         </div>
                     </div>
@@ -62,7 +64,7 @@
             <!-- User avatar dropdown -->
             <div class="dropdown">
                 <div class="user col align-self-end">
-                    <img src="{{asset('assets/images/faces/1.jpg')}}" id="userDropdown" alt="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="{{asset('assets/images/profile.png')}}" id="userDropdown" alt="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <div class="dropdown-header">

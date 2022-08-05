@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Person;
 use App\Models\Provider;
 use App\Models\Facility;
+use RealRashid\SweetAlert\Facades\Alert;
 use Exception;
 
 class UserController extends Controller
@@ -22,36 +23,43 @@ class UserController extends Controller
     public function adduser(Request $request)
     {
 
-        try {
 
-            $person = new Person;
-            $person->firstname = $request->firstname;
-            $person->lastname = $request->lastname;
-            $person->created_date = date('Y-m-d H:i:s');
-            $person->updated_date = date('Y-m-d H:i:s');
-            $person->save();
+        $request->validate([
+            'firstname' => ['required', 'string', 'max:150'],
+            'middlename' => ['max:150'],
+            'lastname' => ['required', 'string', 'max:150'],
+            'email' => 'required|string|email|max:255',
+            'mflcode' => ['required', 'numeric'],
 
-            $pid = $person->person_id;
+        ]);
+        $person = Person::create([
+            'firstname' => $request->get('firstname'),
+            'middlename' => $request->get('middlename'),
+            'lastname' => $request->get('lastname'),
+        ]);
 
-            $user = new User;
-            $user->password = bcrypt($request->phone);
-            $user->person_id =  $pid;
-            $user->email = $request->email;
-            $user->username = $request->firstname;
-            $person->created_date = date('Y-m-d H:i:s');
-            $user->save();
+        $pid = $person['person_id'];
 
+        $user = User::create([
+            'password' => bcrypt($request->get('phone')),
+            'person_id' => $pid,
+            'email' => $request->get('email'),
+            'username' => $request->get('phone'),
+        ]);
 
-            $provider = new Provider;
-            $provider->mfl_code = $request->mflcode;
-            $provider->msisdn = $request->phone;
-            $provider->person_id =  $pid;
-            $person->created_date = date('Y-m-d H:i:s');
-            $person->updated_date = date('Y-m-d H:i:s');
-            $provider->save();
+        $provider = Provider::create([
+            'mfl_code' => $request->get('mflcode'),
+            'msisdn' => $request->get('phone'),
+            'person_id' => $pid,
+        ]);
 
-            return redirect('user');
-        } catch (Exception $e) {
+        if ($person && $user && $provider) {
+            Alert::success('Success', 'You\'ve Successfully Registered User');
+            return back();
+            //return redirect('users/user');
+        } else {
+            Alert::error('Failed', 'Registration failed');
+            return back();
         }
     }
     public function user()
@@ -62,11 +70,15 @@ class UserController extends Controller
             ->select(
                 'tbl_provider.msisdn as phone',
                 'tbl_person.firstname',
+                'tbl_person.middlename',
                 'tbl_person.lastname',
                 'tbl_master_facility.code',
                 'tbl_user.user_id as id',
+                'tbl_user.person_id as person_id',
+                'tbl_user.email',
                 'tbl_master_facility.name as facility'
             )
+            ->where('tbl_user.is_active', '=', '1')
             ->get();
 
         $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
@@ -78,54 +90,69 @@ class UserController extends Controller
     }
     public function edituser(Request $request)
     {
-        try {
-            $user = User::find($request->id);
 
-            $pid = $user->person_id;
 
-            $person = Person::find($pid);
-            $person->firstname = $request->firstname;
-            $person->lastname = $request->lastname;
-            $person->updated_date = date('Y-m-d H:i:s');
-            $person->save();
+        $user = User::where('person_id', $request->person_id)
+            ->update([
+                'email' => $request->email,
+                'username' => $request->phone,
+            ]);
+        $person = Person::where('person_id', $request->person_id)
+            ->update([
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'middlename' => $request->middlename,
+            ]);
 
-            $provider = Provider::find($pid);
-            $provider->mfl_code = $request->mflcode;
-            $provider->msisdn = $request->phone;
-            $person->updated_date = date('Y-m-d H:i:s');
-            $provider->save();
-        } catch (Exception $e) {
+        $provider = Provider::where('person_id', $request->person_id)
+            ->update([
+                'mfl_code' => $request->mflcode,
+                'msisdn' => $request->phone,
+            ]);
+        if ($user) {
+            Alert::success('Success', 'You\'ve Successfully Updated User');
+            return back();
+        } elseif ($person) {
+            Alert::success('Success', 'You\'ve Successfully Updated User');
+            return back();
+        } elseif ($provider) {
+            Alert::success('Success', 'You\'ve Successfully Updated User');
+            return back();
+        } else {
+            Alert::error('Failed', 'Update failed');
+            return back();
         }
     }
     public function resetuser(Request $request)
     {
-        try {
-            $user = User::find($request->id);
-            $user->password = bcrypt($user->username);
-            $user->updated_at = date('Y-m-d H:i:s');
-          //  $user->updated_by = Auth::user()->id;
 
-            if ($user->save()) {
-                return redirect('user')->with('status', 'User has been reset successfull');
-            } else {
-                Session::flash('statuscode', 'error');
-                return back();
-            }
-        } catch (Exception $e) {
+        $user = User::where('person_id', $request->person_id);
+        $user->password = bcrypt($user->username);
+
+        if ($user->save()) {
+            return redirect('user')->with('status', 'User has been reset successfull');
+        } else {
+            Session::flash('statuscode', 'error');
             return back();
         }
     }
     public function deleteuser(Request $request)
     {
-        try{
-            $user = User::where('id', $request->id)
+        $user = User::where('person_id', $request->person_id)
             ->update([
                 'is_active' => '0',
-                'updated_date' =>  date('Y-m-d H:i:s'),
             ]);
-
-        }catch(Exception $e){
-
+        if ($user) {
+            Alert::success('Success', 'You\'ve Successfully Disabled User');
+            return back();
+        } else {
+            Alert::error('Failed', 'Disabled failed');
+            return back();
         }
+    }
+
+    public function forgot()
+    {
+        return view('auth.forgot');
     }
 }
