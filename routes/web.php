@@ -49,6 +49,9 @@ Route::post('/edit/user', ['uses' => 'App\Http\Controllers\UserController@editus
 Route::post('/reset/user', ['uses' => 'App\Http\Controllers\UserController@resetuser', 'as' => 'resetuser']);
 Route::post('/delete/user', ['uses' => 'App\Http\Controllers\UserController@deleteuser', 'as' => 'deleteuser']);
 Route::get('/user/forgot/password', ['uses' => 'App\Http\Controllers\UserController@forgot', 'as' => 'forgot']);
+Route::get('/roles', ['uses' => 'App\Http\Controllers\UserController@role', 'as' => 'role']);
+Route::get('/add/role/form', ['uses' => 'App\Http\Controllers\UserController@addroleform', 'as' => 'addroleform']);
+Route::post('/add/role', ['uses' => 'App\Http\Controllers\UserController@addrole', 'as' => 'addrole']);
 
 
 // sessions

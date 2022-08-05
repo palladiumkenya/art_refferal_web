@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Person;
 use App\Models\Provider;
 use App\Models\Facility;
+use App\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
 use Exception;
 
@@ -132,7 +133,7 @@ class UserController extends Controller
         if ($user->save()) {
             return redirect('user')->with('status', 'User has been reset successfull');
         } else {
-            Session::flash('statuscode', 'error');
+            Alert::error('Failed', 'Update failed');
             return back();
         }
     }
@@ -154,5 +155,30 @@ class UserController extends Controller
     public function forgot()
     {
         return view('auth.forgot');
+    }
+    public function roles()
+    {
+        $roles = Role::select('*')->where('status', '=', 'Active');
+
+        return view('roles.role', compact('roles'));
+    }
+    public function addrole(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'user_level' => ['required', 'string', 'max:150'],
+        ]);
+
+        $role = Role::create([
+            'name' => $request->name,
+            'user_level' => $request->user_level,
+        ]);
+        if($role) {
+            Alert::success('Success', 'You\'ve Successfully Added Role');
+            return back();
+        }else{
+            Alert::error('Failed', 'Update failed');
+            return back();
+        }
     }
 }
