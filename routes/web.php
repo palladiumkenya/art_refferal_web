@@ -58,15 +58,32 @@ Route::get('/user/forgot/password', ['uses' => 'App\Http\Controllers\UserControl
 
 Route::get('/patients', ['uses' => 'App\Http\Controllers\PatientController@index', 'as' => 'patients.list']);
 
-Route::get('patients/create', ['uses' => 'App\Http\Controllers\PatientController@create', 'as' => 'patients.create']);
+Route::get('/patients/create', ['uses' => 'App\Http\Controllers\PatientController@create', 'as' => 'patients.create']);
 
-Route::get('patients/import', ['uses' => 'App\Http\Controllers\PatientController@import', 'as' => 'patients.import']);
+Route::post('/patients/store', ['uses' => 'App\Http\Controllers\PatientController@store', 'as' => 'patients.store']);
 
-Route::post('patients/upload', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.upload']);
+Route::post('/patients/update', ['uses' => 'App\Http\Controllers\PatientController@update', 'as' => 'patients.update']);
 
-Route::post('patients/store', ['uses' => 'App\Http\Controllers\PatientController@store', 'as' => 'patients.store']);
+Route::post('/patients/destroy', ['uses' => 'App\Http\Controllers\PatientController@destroy', 'as' => 'patients.destroy']);
+
+Route::get('/patients/import', ['uses' => 'App\Http\Controllers\PatientController@import', 'as' => 'patients.import']);
+
+Route::post('/patients/upload', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.upload']);
 
 Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
+
+Route::get('/providers/create', ['uses' => 'App\Http\Controllers\ProviderController@create', 'as' => 'providers.create']);
+
+Route::post('/providers/store', ['uses' => 'App\Http\Controllers\ProviderController@store', 'as' => 'providers.store']);
+
+Route::post('/providers/update', ['uses' => 'App\Http\Controllers\ProviderController@update', 'as' => 'providers.update']);
+
+Route::post('/providers/destroy', ['uses' => 'App\Http\Controllers\ProviderController@destroy', 'as' => 'providers.destroy']);
+
+Route::get('/providers/import', ['uses' => 'App\Http\Controllers\ProviderController@import', 'as' => 'providers.import']);
+
+Route::post('/providers/upload', ['uses' => 'App\Http\Controllers\ProviderController@upload', 'as' => 'providers.upload']);
+
 Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
 // });
 
