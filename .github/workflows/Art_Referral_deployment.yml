@@ -22,7 +22,7 @@ jobs:
           sudo chown -R cicd2:cicd2 art_refferal_web
           git config --global --add safe.directory /apps/github-workflows/mhealth-apps/art_refferal_web/      
           cd art_refferal_web
-          git clone -b main https://github.com/palladiumkenya/art_refferal_web.git .
+          git clone -b master https://github.com/palladiumkenya/art_refferal_web.git .
           git status
           cp /apps/configs/art_refferal_web/.env /apps/github-workflows/mhealth-apps/art_refferal_web/
           cp /apps/configs/art_refferal_web/nginx.dockerfile /apps/github-workflows/mhealth-apps/art_refferal_web/
