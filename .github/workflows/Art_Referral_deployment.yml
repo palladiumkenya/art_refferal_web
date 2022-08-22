@@ -24,9 +24,9 @@ jobs:
           cd art_refferal_web
           git clone -b master https://github.com/palladiumkenya/art_refferal_web.git .
           git status
-          cp /apps/configs/art_refferal_web/.env /apps/github-workflows/mhealth-apps/art_refferal_web/
-          cp /apps/configs/art_refferal_web/nginx.dockerfile /apps/github-workflows/mhealth-apps/art_refferal_web/
-          cp -r /apps/configs/art_refferal_web/nginx /apps/github-workflows/mhealth-apps/art_refferal_web/
+          cp /apps/dockerApps/art_refferal_web/.env /apps/github-workflows/mhealth-apps/art_refferal_web/
+          cp /apps/dockerApps/art_refferal_web/nginx.dockerfile /apps/github-workflows/mhealth-apps/art_refferal_web/
+          cp -r /apps/dockerApps/art_refferal_web/nginx /apps/github-workflows/mhealth-apps/art_refferal_web/
           docker-compose down
           docker-compose rm -f
           docker-compose --env-file .env up -d --build site
