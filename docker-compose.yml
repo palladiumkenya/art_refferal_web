@@ -1,0 +1,29 @@
+version: '3'
+
+networks:
+  art_referral:
+
+services:
+  site:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    container_name: art-nginx
+    ports:
+      - 8002:443
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - php
+    networks:
+      - art_referral
+
+  php:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    container_name: art-php
+    volumes:
+      - .:/var/www/html:delegated
+    networks:
+      - art_referral
