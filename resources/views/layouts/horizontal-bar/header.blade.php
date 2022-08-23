@@ -38,6 +38,8 @@
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
                                 <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
+                                <a href="{{route('role')}}"><i class="i-Library"></i> Roles</a>
+                                <a href="{{route('permission')}}"><i class="i-Library"></i> Permissions</a>
                             </div>
                         </div>
                     </div>

@@ -49,9 +49,12 @@ Route::post('/edit/user', ['uses' => 'App\Http\Controllers\UserController@editus
 Route::post('/reset/user', ['uses' => 'App\Http\Controllers\UserController@resetuser', 'as' => 'resetuser']);
 Route::post('/delete/user', ['uses' => 'App\Http\Controllers\UserController@deleteuser', 'as' => 'deleteuser']);
 Route::get('/user/forgot/password', ['uses' => 'App\Http\Controllers\UserController@forgot', 'as' => 'forgot']);
-Route::get('/roles', ['uses' => 'App\Http\Controllers\UserController@role', 'as' => 'role']);
+Route::get('/roles', ['uses' => 'App\Http\Controllers\UserController@roles', 'as' => 'role']);
 Route::get('/add/role/form', ['uses' => 'App\Http\Controllers\UserController@addroleform', 'as' => 'addroleform']);
 Route::post('/add/role', ['uses' => 'App\Http\Controllers\UserController@addrole', 'as' => 'addrole']);
+Route::post('/edit/role', ['uses' => 'App\Http\Controllers\UserController@editrole', 'as' => 'editrole']);
+Route::get('/permissions', ['uses' => 'App\Http\Controllers\UserController@permission', 'as' => 'permission']);
+Route::post('/add/permission', ['uses' => 'App\Http\Controllers\UserController@addpermission', 'as' => 'addpermission']);
 
 
 // sessions

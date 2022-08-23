@@ -10,6 +10,7 @@ use App\Models\Facility;
 use App\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
 use Exception;
+use App\Models\Permission;
 
 class UserController extends Controller
 {
@@ -158,26 +159,65 @@ class UserController extends Controller
     }
     public function roles()
     {
-        $roles = Role::select('*')->where('status', '=', 'Active');
+        $permissions = Permission::all();
+        $roles = Role::select('*')->where('status', '=', 'Active')->get();
 
-        return view('roles.role', compact('roles'));
+        return view('roles.role', compact('roles', 'permissions'));
     }
     public function addrole(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'user_level' => ['required', 'string', 'max:150'],
         ]);
 
         $role = Role::create([
             'name' => $request->name,
-            'user_level' => $request->user_level,
         ]);
         if($role) {
             Alert::success('Success', 'You\'ve Successfully Added Role');
             return back();
         }else{
+            Alert::error('Failed', 'Save failed');
+            return back();
+        }
+    }
+    public function editrole(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+        ]);
+
+        $role = Role::where('id', $request->id)
+        ->update([
+            'name' => $request->name,
+        ]);
+        if($role) {
+            Alert::success('Success', 'You\'ve Successfully Updated Role');
+            return back();
+        }else{
             Alert::error('Failed', 'Update failed');
+            return back();
+        }
+    }
+    public function permission()
+    {
+        $permissions = Permission::all();
+        return view('permissions.permission', compact('permissions'));
+    }
+    public function addpermission(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+        ]);
+
+        $permission = Permission::create([
+            'name' => $request->name,
+        ]);
+        if($permission) {
+            Alert::success('Success', 'You\'ve Successfully Added Permisson');
+            return back();
+        }else{
+            Alert::error('Failed', 'Save failed');
             return back();
         }
     }

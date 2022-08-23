@@ -10,11 +10,11 @@
     <div class="card text-left">
 
         <div class="card-body">
-            <h4 class="card-title mb-3"> Roles</h4>
+            <h4 class="card-title mb-3"> Permission</h4>
 
             <div style="margin-bottom:10px; ">
                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addRole">
-                    <i class="fa fa-plus"></i> Add Role
+                    <i class="fa fa-plus"></i> Add Permission
                 </button>
             </div>
             <div class="table-responsive">
@@ -23,22 +23,18 @@
                         <tr>
                             <th>No.</th>
                             <th>Name</th>
-                            <th>Name</th>
-                            <th>Name</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (count($roles) > 0)
-                        @foreach($roles as $role)
+                        @if (count($permissions) > 0)
+                        @foreach($permissions as $permission)
                         <tr>
                             <td> {{ $loop->iteration }}</td>
-                            <td> {{$role->name}}</td>
-                            <td> {{$role->name}}</td>
-                            <td> {{$role->name}}</td>
+                            <td> {{$permission->name}}</td>
                             <td>
-                                <button onclick="editRole({{$role}});" data-toggle="modal" data-target="#editRole" type="button" class="btn btn-primary btn-sm">Edit</button>
-                                <button onclick="deleteRole({{$role->id}});" type="button" class="btn btn-danger btn-sm">Delete</button>
+                                <button onclick="editRole({{$permission}});" data-toggle="modal" data-target="#editRole" type="button" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteRole({{$permission->id}});" type="button" class="btn btn-danger btn-sm">Delete</button>
 
                             </td>
                         </tr>
@@ -60,14 +56,14 @@
         <div class="modal-content">
             <div class="modal-header">
 
-                <div class="card-title mb-3">New Role</div>
+                <div class="card-title mb-3">New Permission</div>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <form role="form" method="post" action="{{route('addrole')}}">
+                            <form role="form" method="post" action="{{route('addpermission')}}">
                                 {{ csrf_field() }}
                                 <div class="row">
                                     <input type="hidden" name="id" id="id">
@@ -99,7 +95,7 @@
         <div class="modal-content">
             <div class="modal-header">
 
-                <div class="card-title mb-2">Edit Role</div>
+                <div class="card-title mb-3">Edit Permission</div>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -122,34 +118,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <form role="form" method="post" action="{{route('editrole')}}">
-                                {{ csrf_field() }}
-                                <div class="row">
-                                <div class="card-title mb-2">Assign Permission</div>
-                                    <input type="hidden" name="id" id="id">
-                                    <div class="col-md-12 form-group mb-3">
-                                        <label for="permission">Permission</label>
-                                        <select class="form-control" data-width="100%" id="permission" name="permission" autocomplete="permission-name">
-                                            <option value="">Please select </option>
-                                            @foreach($permissions as $permission)
-                                            <option value="{{ $permission->id }}">{{ $permission->name }}</option>
-                                            @endforeach
-
-                                        </select>
-
-                                    </div>
-
-                                </div>
-                                <button type="submit" class="btn btn-block btn-primary">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
@@ -166,9 +134,9 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
-    function editRole(role) {
-        $('#name').val(role.name);
-        $('#id').val(role.id);
+    function editRole(permission) {
+        $('#name').val(permission.name);
+        $('#id').val(permission.id);
     }
 </script>
 
