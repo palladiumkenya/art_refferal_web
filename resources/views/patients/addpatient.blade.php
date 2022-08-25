@@ -103,7 +103,7 @@
     <div class="col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title mb-3">Patient's Observations & Facility</div>
+                <div class="card-title mb-3">Patient's Observations</div>
                     <div class="row">
 
                         <div class="col-md-6 form-group mb-3">
@@ -122,7 +122,7 @@
                         </div>
 
                         <div class="col-md-6 form-group mb-3">
-                            <label for="from_date">Facility Care Start Date</label>
+                            <label for="from_date">Date enrolled in facility</label>
                             <input id="from_date" class="form-control" placeholder="dd-mm-yyyy" name="from_date" value="{{ old('from_date') }}" >
                             @error('from_date')
                                 <div class="alert alert-danger">{{ $message }}</div>

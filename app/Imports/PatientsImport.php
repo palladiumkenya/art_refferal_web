@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Helper\Helper;
 use App\Models\Patient;
 use App\Models\Person;
 use App\Models\PatientFacility;
@@ -27,38 +28,22 @@ class PatientsImport implements OnEachRow, WithHeadingRow
         $row      = $row->toArray();
 
          //create a new person record
-        $person = Person::create([
+        $data = array(
             "firstname" => $row['firstname'],
             "middlename" => $row['middlename'],
             "lastname" => $row['lastname'],
-        ]);
-
-        //create patient record
-        $patient =  Patient::create([
-            'person_id' => $person['person_id'],
             'ccc_no' => $row['ccc_no'],
             'upi' => $row['upi'] == '' ? null : $row['upi'],
             'date_of_birth' => date('Y-m-d', strtotime($row['date_of_birth'])),
             'art_start_date' => date('Y-m-d', strtotime($row['art_start_date'])),
-            'msidn' => $row['phone_no'],
-        ]);
-
-        //create patient observation
-        PatientObservation::create([
-            'patient_id' => $patient['patient_id'],
+            'phone_no' => $row['phone_no'],
             'mfl_code' => $row['mfl_code'],
             'viral_load' => $row['viral_load'],
             'regimen' => $row['regimen'],
             'tca' => date('Y-m-d', strtotime($row['tca'])),
-        ]);
-
-        //create patient facility
-        PatientFacility::create([
-            'patient_id' => $patient['patient_id'],
-            'mfl_code' => $row['mfl_code'],
-            'from_date' => date('Y-m-d', strtotime($row['from_date'])),
-        ]);
-
+            'date_enrolled_in_facility' => date('Y-m-d', strtotime($row['date_enrolled_in_facility'])),
+         );
+        $person = Helper::PatientStore($data);
         return $person;
     }
 

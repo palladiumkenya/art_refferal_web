@@ -1,2 +1,2 @@
-firstname,middlename,lastname,ccc_no,upi,date_of_birth,art_start_date,phone_no,mfl_code,from_date,viral_load,regimen,tca
+firstname,middlename,lastname,ccc_no,upi,date_of_birth,art_start_date,phone_no,mfl_code,date_enrolled_in_facility,viral_load,regimen,tca
 John,Kwanza,Doe,1234567890,MOH-UPI-NUMBER,15-06-2022,15-06-2022,722113344,12345,15-06-2022,1200/copies ml,TDF+3TC+NVP,15-06-2022

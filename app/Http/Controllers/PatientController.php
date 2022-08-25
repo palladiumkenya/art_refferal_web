@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Helper\Helper;
 use App\Models\Person;
 use App\Models\Patient;
 use App\Models\PatientFacility;
@@ -83,38 +84,24 @@ class PatientController extends Controller
 
         //DB::transaction(function ($request) {
 
-            //create a new person record
-            $person =  Person::create([
+            $data = array(
                 'firstname' => $request->get('firstname'),
                 'middlename' => $request->get('middlename'),
                 'lastname' => $request->get('lastname'),
-            ]);
-
-            //create patient record
-            $patient =  Patient::create([
-                'person_id' => $person['person_id'],
                 'ccc_no' => $request->get('ccc_no'),
                 'upi' => $request->get('upi') == '' ? null : $request->get('upi'),
                 'date_of_birth' => date('Y-m-d', strtotime($request->get('date_of_birth'))),
                 'art_start_date' => date('Y-m-d', strtotime($request->get('art_start_date'))),
-                'msidn' => $request->get('phone'),
-            ]);
-
-            //create patient observation
-            PatientObservation::create([
-                'patient_id' => $patient['patient_id'],
+                'phone_no' => $request->get('phone'),
                 'mfl_code' => $request->get('facility'),
                 'viral_load' => $request->get('viral_load'),
                 'regimen' => $request->get('regimen'),
                 'tca' => date('Y-m-d', strtotime($request->get('tca'))),
-            ]);
+                'date_enrolled_in_facility' => date('Y-m-d', strtotime($request->get('from_date'))),
+            );
 
-            //create patient facility
-            PatientFacility::create([
-                'patient_id' => $patient['patient_id'],
-                'mfl_code' => $request->get('facility'),
-                'from_date' => date('Y-m-d', strtotime($request->get('from_date'))),
-            ]);
+            //create a new person record
+            $person = Helper::PatientStore($data);
 
             return redirect()->route('patients.list');
 
