@@ -38,8 +38,12 @@
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
                                 <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
-                                <a href="{{route('role')}}"><i class="i-Library"></i> Roles</a>
-                                <a href="{{route('permission')}}"><i class="i-Library"></i> Permissions</a>
+                                @can('role-list')
+                                <a href="{{ route('roles.index') }}"><i class="i-Library"></i> Roles</a>
+                                @endcan
+                                @can('permission-list')
+                                <a href="{{ route('permissions.index') }}"><i class="i-Library"></i> Permissions</a>
+                                @endcan
                             </div>
                         </div>
                     </div>
@@ -66,11 +70,13 @@
             <!-- User avatar dropdown -->
             <div class="dropdown">
                 <div class="user col align-self-end">
-                    <img src="{{asset('assets/images/profile.png')}}" id="userDropdown" alt="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        {{ Auth::user()->name }}
+                    </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <div class="dropdown-header">
-                            <i class="i-Lock-User mr-1"></i>
+                            {{ Auth::user()->name }}
                         </div>
                         <a class="dropdown-item">Account settings</a>
                         <a class="dropdown-item" href="{{route('logout')}}">Sign out</a>

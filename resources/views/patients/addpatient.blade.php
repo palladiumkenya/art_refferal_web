@@ -28,7 +28,7 @@
     <div class="col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title mb-3">Patient Bio</div>
+                <div class="card-title mb-3">Patient's Bio</div>
                     {{ csrf_field() }}
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
@@ -103,7 +103,7 @@
     <div class="col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title mb-3">Patient Observations & Facility</div>
+                <div class="card-title mb-3">Patient's Observations & Facility</div>
                     <div class="row">
 
                         <div class="col-md-6 form-group mb-3">
@@ -148,7 +148,7 @@
                         <div class="col-md-6 form-group mb-3">
                             <label for="tca">TCA</label>
                             <input id="tca" class="form-control" placeholder="dd-mm-yyyy" name="tca" value="{{ old('tca') }}" >
-                            @error('art_start_date')
+                            @error('tca')
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>

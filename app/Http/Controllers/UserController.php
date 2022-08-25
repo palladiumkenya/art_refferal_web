@@ -7,31 +7,56 @@ use App\Models\User;
 use App\Models\Person;
 use App\Models\Provider;
 use App\Models\Facility;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
 use Exception;
 use App\Models\Permission;
+use App\Models\Partner;
+use App\Models\Agency;
+
 
 class UserController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
     public function adduserform()
     {
         $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
             ->select('tbl_master_facility.code', 'tbl_master_facility.name')
             ->orderBy('tbl_master_facility.name', 'ASC')
             ->get();
-        return view('users.adduser', compact('facilities'));
+        $partners = Partner::all();
+        $agencies = Agency::all();
+        $roles = Role::all();
+        return view('users.adduser', compact('facilities', 'partners', 'agencies', 'roles'));
+    }
+
+    public function create()
+    {
+        $roles = Role::all();
+        $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+            ->select('tbl_master_facility.code', 'tbl_master_facility.name')
+            ->orderBy('tbl_master_facility.name', 'ASC')
+            ->get();
+        $partners = Partner::all();
+        $agencies = Agency::all();
+
+        return view('users.create', compact('roles', 'facilities', 'partners', 'agencies'));
     }
     public function adduser(Request $request)
     {
-
 
         $request->validate([
             'firstname' => ['required', 'string', 'max:150'],
             'middlename' => ['max:150'],
             'lastname' => ['required', 'string', 'max:150'],
             'email' => 'required|string|email|max:255',
-            'mflcode' => ['required', 'numeric'],
+            'role' => ['required', 'numeric'],
 
         ]);
         $person = Person::create([
@@ -46,8 +71,13 @@ class UserController extends Controller
             'password' => bcrypt($request->get('phone')),
             'person_id' => $pid,
             'email' => $request->get('email'),
-            'username' => $request->get('phone'),
+            'name' => $request->get('lastname'),
+            'partner_id' => $request->get('partner'),
+            'role_id' => $request->get('role'),
+            'mfl_code' => $request->get('mflcode'),
+            'agency_id' => $request->get('agency'),
         ]);
+
 
         $provider = Provider::create([
             'mfl_code' => $request->get('mflcode'),
@@ -66,29 +96,35 @@ class UserController extends Controller
     }
     public function user()
     {
-        $user = User::join('tbl_provider', 'tbl_user.person_id', '=', 'tbl_provider.person_id')
-            ->join('tbl_person', 'tbl_user.person_id', '=', 'tbl_person.person_id')
-            ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
+        $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
+            ->join('tbl_person', 'users.person_id', '=', 'tbl_person.person_id')
+            ->join('roles', 'roles.id', '=', 'users.role_id')
             ->select(
                 'tbl_provider.msisdn as phone',
                 'tbl_person.firstname',
                 'tbl_person.middlename',
                 'tbl_person.lastname',
-                'tbl_master_facility.code',
-                'tbl_user.user_id as id',
-                'tbl_user.person_id as person_id',
-                'tbl_user.email',
-                'tbl_master_facility.name as facility'
+                'users.id as id',
+                'users.person_id as person_id',
+                'users.email',
+                'roles.name as role',
+                'users.role_id',
+                'users.agency_id',
+                'users.partner_id',
+                'users.mfl_code'
             )
-            ->where('tbl_user.is_active', '=', '1')
+            ->where('users.is_active', '=', '1')
             ->get();
 
         $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
             ->select('tbl_master_facility.code', 'tbl_master_facility.name')
             ->orderBy('tbl_master_facility.name', 'ASC')
             ->get();
+        $partners = Partner::all();
+        $agencies = Agency::all();
+        $roles = Role::all();
 
-        return view('users.user', compact('user', 'facilities'));
+        return view('users.user', compact('user', 'facilities', 'roles', 'agencies', 'partners'));
     }
     public function edituser(Request $request)
     {
@@ -98,6 +134,11 @@ class UserController extends Controller
             ->update([
                 'email' => $request->email,
                 'username' => $request->phone,
+                'name' => $request->lastname,
+                'partner_id' => $request->partner,
+                'role_id' => $request->role,
+                'mfl_code' => $request->mflcode,
+                'agency_id' => $request->agency,
             ]);
         $person = Person::where('person_id', $request->person_id)
             ->update([
@@ -173,10 +214,10 @@ class UserController extends Controller
         $role = Role::create([
             'name' => $request->name,
         ]);
-        if($role) {
+        if ($role) {
             Alert::success('Success', 'You\'ve Successfully Added Role');
             return back();
-        }else{
+        } else {
             Alert::error('Failed', 'Save failed');
             return back();
         }
@@ -188,13 +229,13 @@ class UserController extends Controller
         ]);
 
         $role = Role::where('id', $request->id)
-        ->update([
-            'name' => $request->name,
-        ]);
-        if($role) {
+            ->update([
+                'name' => $request->name,
+            ]);
+        if ($role) {
             Alert::success('Success', 'You\'ve Successfully Updated Role');
             return back();
-        }else{
+        } else {
             Alert::error('Failed', 'Update failed');
             return back();
         }
@@ -213,10 +254,10 @@ class UserController extends Controller
         $permission = Permission::create([
             'name' => $request->name,
         ]);
-        if($permission) {
+        if ($permission) {
             Alert::success('Success', 'You\'ve Successfully Added Permisson');
             return back();
-        }else{
+        } else {
             Alert::error('Failed', 'Save failed');
             return back();
         }

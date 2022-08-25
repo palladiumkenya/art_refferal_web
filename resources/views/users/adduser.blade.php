@@ -52,6 +52,48 @@
                             @enderror
                         </div>
                         <div class="col-md-6 form-group mb-3">
+                            <label for="role">Role</label>
+                            <select class="form-control" data-width="100%" id="role" name="role">
+                                <option value="">Please select </option>
+                                @if (count($roles) > 0)
+                                @foreach($roles as $role)
+                                <option value="{{$role->id }}">{{ ucwords($role->name) }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                            @error('role')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 form-group mb-3" id="agency_div">
+                            <label for="agency">Agency</label>
+                            <select class="form-control" data-width="100%" id="agency" name="agency">
+                                <option value="">Please select </option>
+                                @if (count($agencies) > 0)
+                                @foreach($agencies as $agency)
+                                <option value="{{$agency->agency_id }}">{{ ucwords($agency->agency_name) }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                            @error('agency')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 form-group mb-3" id="partner_div">
+                            <label for="partner">Partner</label>
+                            <select class="form-control" data-width="100%" id="partner" name="partner">
+                                <option value="">Please select </option>
+                                @if (count($partners) > 0)
+                                @foreach($partners as $partner)
+                                <option value="{{$partner->partner_id }}">{{ ucwords($partner->partner_name) }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                            @error('partner')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 form-group mb-3" id="mflcode_div">
                             <label for="mflcode">Facility</label>
                             <select class="form-control" data-width="100%" id="mflcode" name="mflcode">
                                 <option value="">Please select </option>
@@ -62,7 +104,7 @@
                                 @endif
                             </select>
                             @error('mflcode')
-                                <div class="alert alert-danger">{{ $message }}</div>
+                            <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -84,7 +126,30 @@
 
 @section('bottom-js')
 <script type="text/javascript">
-
+    $("#role").change(function() {
+        if ($(this).val() == "") {
+            $('#partner_div').hide();
+            $('#mflcode_div').hide();
+            $('#agency_div').hide();
+        } else if ($(this).val() == "1") {
+            $('#partner_div').hide();
+            $('#mflcode_div').hide();
+            $('#agency_div').hide();
+        } else if ($(this).val() == "2") {
+            $('#partner_div').show();
+            $('#mflcode_div').hide();
+            $('#agency_div').hide();
+        } else if ($(this).val() == "3") {
+            $('#partner_div').hide();
+            $('#mflcode_div').show();
+            $('#agency_div').hide();
+        } else if ($(this).val() == "4") {
+            $('#partner_div').hide();
+            $('#mflcode_div').hide();
+            $('#agency_div').show();
+        }
+    });
+    $("#role").trigger("change");
 </script>
 
 
