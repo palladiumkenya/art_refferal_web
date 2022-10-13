@@ -50,6 +50,22 @@
                     </div>
                 </div>
             </div>
+            <div class="dropdown mega-menu d-none d-md-block">
+                <a href="#" class="btn text-muted dropdown-toggle mr-3" id="dropdownMegaMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>
+                <div class="dropdown-menu text-left" aria-labelledby="dropdownMenuButton">
+                    <div class="row m-0">
+
+                        <div class="col-md-4 p-4">
+                            <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
+                            <div class="menu-icon-grid w-auto p-0">
+
+                                <a href="/referral"><i class="i-Shop-4"></i> Referral</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- / Mega menu -->
             <!-- <div class="search-bar">
                     <input type="text" placeholder="Search">
