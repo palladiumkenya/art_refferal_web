@@ -82,6 +82,20 @@ Route::get('/patients/import', ['uses' => 'App\Http\Controllers\PatientControlle
 
 Route::post('/patients/upload', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.upload']);
 
+Route::get('/patients/search', ['uses' => 'App\Http\Controllers\PatientController@search', 'as' => 'patients.search']);
+
+Route::post('/patients/filter', ['uses' => 'App\Http\Controllers\PatientController@filter', 'as' => 'patients.filter']);
+
+Route::get('/patients/{id}', ['uses' => 'App\Http\Controllers\PatientController@show', 'as' => 'patients.show']);
+
+Route::post('/patients/observation/store', ['uses' => 'App\Http\Controllers\PatientController@observation_store', 'as' => 'patients.observation.store']);
+
+Route::post('/patients/observation/update', ['uses' => 'App\Http\Controllers\PatientController@observation_update', 'as' => 'patients.observation.update']);
+
+Route::post('/patients/referral/store', ['uses' => 'App\Http\Controllers\PatientController@referral_store', 'as' => 'patients.referral.store']);
+
+Route::post('/patients/referral/update', ['uses' => 'App\Http\Controllers\PatientController@referral_update', 'as' => 'patients.referral.update']);
+
 Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
 
 Route::get('/providers/create', ['uses' => 'App\Http\Controllers\ProviderController@create', 'as' => 'providers.create']);

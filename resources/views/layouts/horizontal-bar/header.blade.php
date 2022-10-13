@@ -23,6 +23,7 @@
                                 <a href="/home"><i class="i-Shop-4"></i> Home</a>
                                 <a href="{{route('patients.list')}}"><i class="i-Drop"></i> Patients</a>
                                 <a href="{{route('providers.list')}}"><i class="i-Drop"></i> Providers</a>
+                                <a href="{{route('patients.search')}}"><i class="i-Drop"></i> Patient Details</a>
 
                             </div>
                         </div>
