@@ -81,6 +81,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/patients/upload', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.upload']);
 
+    Route::get('/patients/search', ['uses' => 'App\Http\Controllers\PatientController@upload', 'as' => 'patients.search']);
+
 Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
 
     Route::get('/providers/create', ['uses' => 'App\Http\Controllers\ProviderController@create', 'as' => 'providers.create']);
