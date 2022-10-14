@@ -6,7 +6,7 @@
 <div class="breadcrumb">
                 <h1>Search Patient</h1>
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><a href="/home">Home</a></li>
                     <li>Search</li>
                 </ul>
 
