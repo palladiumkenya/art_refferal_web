@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\DB;
 use App\Helper\Helper;
 use App\Models\Person;
 use App\Models\Patient;
+use App\Models\PatientDetail;
 use App\Models\PatientFacility;
 use App\Models\PatientObservation;
 use App\Models\Facility;
+use App\Models\ReferralType;
+use App\Models\Regimen;
 use App\Imports\PatientsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -148,6 +151,143 @@ class PatientController extends Controller
         } else {
             Alert::error('Failed', 'Delete Failed');
             //return back();
+        }
+    }
+
+    public function search()
+    {
+        return view('patients.search');
+    }
+
+    public function filter(Request $request)
+    {
+        $filter = $request->filter;
+        if($filter != ''){
+            $patient = PatientDetail::where('full_name','LIKE','%'.$filter.'%')->orWhere('ccc_no','LIKE','%'.$filter.'%')->get();
+            if(count($patient) > 0){
+                return view('patients.search')->withDetails($patient)->withQuery($filter);
+            }
+            else {
+                return view ('patients.search')->withMessage('No Details found. Try to search again !');
+            }
+
+        }
+        else {
+            return view ('patients.search')->withMessage('Type in some patient details to search!');
+        }
+
+    }
+
+    public function show(Request $request)
+    {
+        $id = base64_decode(base64_decode($request->route('id')));
+        $patientDetails = PatientDetail::where('person_id', $id)->get();
+        $referral_types = ReferralType::orderBy('referral_type', 'ASC')->get();
+        $regimens = Regimen::orderBy('regimen_desc', 'ASC')->get();
+        $mfl_facilities = $this->facilitiesList();
+        foreach($patientDetails as $row){
+            $facilities = DB::table('tbl_patient_facilities as a')
+                                ->join('tbl_master_facility as b', 'a.mfl_code', '=', 'b.code')
+                                ->where('a.patient_id',  $row->patient_id)
+                                ->select('a.mfl_code', 'b.name as facility_name')
+                                ->distinct()
+                                ->get();
+            $observations =  DB::table('tbl_patient_observations')
+                                ->join('tbl_master_facility', 'tbl_patient_observations.mfl_code', '=', 'tbl_master_facility.code')
+                                ->where('tbl_patient_observations.patient_id', '=', $row->patient_id)
+                                ->select('tbl_patient_observations.*', 'tbl_master_facility.name as facility')
+                                ->get();
+            $refferals =  DB::table('tbl_refferal as a')
+                                ->join('tbl_patient as b', 'a.ccc_no', '=', 'b.ccc_no')
+                                ->leftJoin('tbl_master_facility as c', 'a.initiator_mfl_code', '=', 'c.code')
+                                ->leftJoin('tbl_master_facility as d', 'a.reffered_mfl_code', '=', 'd.code')
+                                ->where('b.patient_id', '=', $row->patient_id)
+                                ->select('a.*', 'c.name as from_facility', 'd.name as to_facility')
+                                ->get();
+        }
+
+        return view('patients.show-details', compact('patientDetails', 'facilities', 'observations', 'refferals','referral_types','mfl_facilities','regimens'));
+    }
+
+    public function observation_store(Request $request)
+    {
+
+            // validate request
+        $validated = $request->validate([
+            'patient_id' => ['required'],
+            'viral_load_new' => ['required', 'string', 'max:45'],
+            'regimen_new' => ['required', 'string', 'max:100'],
+            'tca_new' => ['required' ],
+            'observation_mflcode_new' => ['required' ],
+        ]);
+
+        //create patient observation
+        $observation = PatientObservation::create([
+            'patient_id' => $request->get('patient_id'),
+            'mfl_code' => $request->get('observation_mflcode_new'),
+            'viral_load' => $request->get('viral_load_new'),
+            'regimen' => $request->get('regimen_new'),
+            'tca' => date('Y-m-d', strtotime($request->get('tca_new'))),
+        ]);
+
+        if ($observation) {
+            Alert::success('Success', 'You\'ve successfully added a new observation record');
+            return back();
+        } else {
+            Alert::error('Failed', 'Add failed');
+            return back();
+        }
+    }
+
+    public function observation_update(Request $request)
+    {
+
+        $observation = PatientObservation::where('id', $request->observation_id)
+            ->update([
+                'mfl_code' => $request->observation_mflcode,
+                'viral_load' => $request->viral_load,
+                'regimen' => $request->regimen,
+                'tca' => date('Y-m-d', strtotime($request->tca)),
+            ]);
+
+        if ($observation) {
+            Alert::success('Success', 'You\'ve successfully updated the observation record');
+            return back();
+        } else {
+            Alert::error('Failed', 'Update failed');
+            return back();
+        }
+    }
+
+    public function referral_store(Request $request)
+    {
+
+            // validate request
+        $validated = $request->validate([
+            'ccc_no' => ['required'],
+            'referral_type' => ['required'],
+            'reffered_mfl_code' => ['required'],
+            'tca_referral' => ['required'],
+            'regimen_referral' => ['required'],
+            'drug_days_new' => ['required', 'numeric'],
+        ]);
+
+        //create patient observation
+        $referral = Referral::create([
+            'ccc_no' => $request->get('ccc_no'),
+            'referral_type' => $request->get('referral_type'),
+            'initiation_date' => date('Y-m-d'),
+            'viral_load' => $request->get('viral_load_new'),
+            'regimen' => $request->get('regimen_new'),
+            'tca' => date('Y-m-d', strtotime($request->get('tca_new'))),
+        ]);
+
+        if ($observation) {
+            Alert::success('Success', 'You\'ve successfully added a new observation record');
+            return back();
+        } else {
+            Alert::error('Failed', 'Add failed');
+            return back();
         }
     }
 }

@@ -34,14 +34,14 @@ class PatientsImport implements OnEachRow, WithHeadingRow
             "lastname" => $row['lastname'],
             'ccc_no' => $row['ccc_no'],
             'upi' => $row['upi'] == '' ? null : $row['upi'],
-            'date_of_birth' => date('Y-m-d', strtotime($row['date_of_birth'])),
-            'art_start_date' => date('Y-m-d', strtotime($row['art_start_date'])),
+            'date_of_birth' => date('Y-m-d', strtotime(str_replace('/', '-', $row['date_of_birth']))),
+            'art_start_date' => date('Y-m-d', strtotime(str_replace('/', '-',$row['art_start_date']))),
             'phone_no' => $row['phone_no'],
             'mfl_code' => $row['mfl_code'],
             'viral_load' => $row['viral_load'],
             'regimen' => $row['regimen'],
-            'tca' => date('Y-m-d', strtotime($row['tca'])),
-            'date_enrolled_in_facility' => date('Y-m-d', strtotime($row['date_enrolled_in_facility'])),
+            'tca' => date('Y-m-d', strtotime(str_replace('/', '-',$row['tca']))),
+            'date_enrolled_in_facility' => date('Y-m-d', strtotime(str_replace('/', '-',$row['date_enrolled_in_facility']))),
          );
         $person = Helper::PatientStore($data);
         return $person;
