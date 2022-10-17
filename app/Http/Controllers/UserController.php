@@ -13,6 +13,7 @@ use Exception;
 use App\Models\Permission;
 use App\Models\Partner;
 use App\Models\Agency;
+use App\Models\ProviderUser;
 
 
 class UserController extends Controller
@@ -76,16 +77,23 @@ class UserController extends Controller
             'role_id' => $request->get('role'),
             'mfl_code' => $request->get('mflcode'),
             'agency_id' => $request->get('agency'),
-        ]);
-
-
-        $provider = Provider::create([
-            'mfl_code' => $request->get('mflcode'),
             'msisdn' => $request->get('phone'),
-            'person_id' => $pid,
         ]);
 
-        if ($person && $user && $provider) {
+        if ($request->role == '3') {
+            $provider = Provider::create([
+                'mfl_code' => $request->get('mflcode'),
+                'msisdn' => $request->get('phone'),
+                'person_id' => $pid,
+            ]);
+            $user_provider = ProviderUser::create([
+                'username' => $request->get('firstname'),
+                'email' => $request->get('email'),
+                'person_id' => $pid,
+            ]);
+        }
+
+        if ($person && $user || $provider || $user_provider) {
             Alert::success('Success', 'You\'ve Successfully Registered User');
             return back();
             //return redirect('users/user');
@@ -169,8 +177,10 @@ class UserController extends Controller
     public function resetuser(Request $request)
     {
 
-        $user = User::where('person_id', $request->person_id);
-        $user->password = bcrypt($user->username);
+        // $user = User::where('person_id', $request->person_id);
+        $user = User::find($request->id);
+        $user->password = bcrypt($user->email);
+        $user->first_access = 'Yes';
 
         if ($user->save()) {
             return redirect('user')->with('status', 'User has been reset successfull');
@@ -181,11 +191,9 @@ class UserController extends Controller
     }
     public function deleteuser(Request $request)
     {
-        $user = User::where('person_id', $request->person_id)
-            ->update([
-                'is_active' => '0',
-            ]);
-        if ($user) {
+        $user = User::find($request->id);
+        $user->is_active = '0';
+        if ($user->save()) {
             Alert::success('Success', 'You\'ve Successfully Disabled User');
             return back();
         } else {
@@ -259,6 +267,27 @@ class UserController extends Controller
             return back();
         } else {
             Alert::error('Failed', 'Save failed');
+            return back();
+        }
+    }
+    public function changepass(Request $request)
+    {
+        try {
+            $user = User::find($request->id);
+
+            $user->password = bcrypt($request->new_password);
+            $user->first_access = 'No';
+
+            if ($user->save()) {
+                Alert::success('Success', 'Password has been changed successfully!');
+                return redirect('/');
+            } else {
+
+                Alert::error('Failed', 'An error has occurred please try again later.');
+                return back();
+            }
+        } catch (Exception $e) {
+
             return back();
         }
     }

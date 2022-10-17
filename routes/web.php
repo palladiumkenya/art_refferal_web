@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/reset/user', ['uses' => 'App\Http\Controllers\UserController@resetuser', 'as' => 'resetuser']);
     Route::post('/delete/user', ['uses' => 'App\Http\Controllers\UserController@deleteuser', 'as' => 'deleteuser']);
     Route::get('/user/forgot/password', ['uses' => 'App\Http\Controllers\UserController@forgot', 'as' => 'forgot']);
+    Route::post('/changepass', ['uses' => 'App\Http\Controllers\UserController@changepass', 'as' => 'changepass']);
     //Route::get('/roles', ['uses' => 'App\Http\Controllers\RoleController@index', 'as' => 'role']);
     //Route::get('/add/role/form', ['uses' => 'App\Http\Controllers\UserController@addroleform', 'as' => 'addroleform']);
     //Route::post('/add/role', ['uses' => 'App\Http\Controllers\UserController@addrole', 'as' => 'addrole']);

@@ -14,35 +14,84 @@
     <div class="auth-layout-wrap">
         <div class="auth-content">
             <div class="card o-hidden">
-                   <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="p-4">
                             <div class="auth-logo text-center mb-4">
-                                <img src="{{asset('assets/images/logo.png')}}" alt="">
+
+
+                                <h4>Reset Password</h4>
                             </div>
-                            <h1 class="mb-3 text-18">Forgot Password</h1>
-                            <form action="">
-                                <div class="form-group">
-                                    <label for="email">Email address</label>
-                                    <input id="email" class="form-control form-control-rounded" type="email">
+
+                            <form role="form" method="post" action="{{route('changepass')}}">
+                                {{ csrf_field() }}
+                                <div class="row">
+                                    <input type="hidden" name="id" value="{{Auth::user()->id}}">
+
+                                    <div class="form-group col-md-12">
+                                        <label for="new_password" class="col-sm-2 control-label "><b>New Password </b></label>
+                                        <div class="col-sm-10">
+                                            <input type="password" pattern=".{6,20}" required title="password requires more than 6 characters" class="form-control new_password password" name="new_password" id="new_password" placeholder="New Password... ">
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="btn btn-primary btn-block btn-rounded mt-3">Reset Password</button>
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="confirm_new_password" class="col-sm-2 control-label">Confirm Password
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="password" pattern=".{6,20}" required title="password requires more than 6 characters" class="form-control confirm_new_password password" name="confirm_new_password" id="confirm_new_password" placeholder="Confirm Password... ">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn_div" style="display: none;">
+                                    <button type="submit" class="btn btn-info pull-right">Change Password</button>
 
+                                </div>
                             </form>
-                            <div class="mt-3 text-center">
-                                <a class="text-muted" href="/"><u>Back</u></a>
-                            </div>
-                        </div>
-                    </div>
 
+                        </div><!-- /.box-body -->
+                    </div>
+                    <div class="modal-footer">
+
+                        <a type="button" class="btn btn-info pull-right" href="{{route('logout')}}">Login</a>
+                    </div>
+                    <div class="center">
+
+                    </div>
+                    <div class="register-link m-t-15 text-center">
+
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <script src="{{asset('assets/js/common-bundle-script.js')}}"></script>
 
     <script src="{{asset('assets/js/script.js')}}"></script>
+
+    <!-- Sweet alert -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+
 </body>
 
 </html>
+
+<script type="text/javascript">
+    $(".password").keyup(function() {
+        var password = $("#new_password").val();
+        var password2 = $("#confirm_new_password").val();
+        if (password == password2) {
+            $(".btn_div").show();
+        } else {
+            $(".btn_div").hide();
+        }
+    });
+</script>

@@ -198,13 +198,15 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to reset this user's password?.</p>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
-                <button id="reset" type="button" class="btn btn-success" data-person_id="">Reset</button>
             </div>
-            <div class="modal-footer">
+            <form id="reset_form">
+                {{ csrf_field() }}
+                <div class="modal-footer">
 
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="reset" type="submit" class="btn btn-primary">Reset</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -217,6 +219,9 @@
 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript">
     function editUser(user) {
 
@@ -256,33 +261,56 @@
         $('#agency').val(user.agency_id);
     }
 
-    function resetUser(uid) {
+    function resetUser(id) {
         $('#ResetModal').modal('show');
+        console.log(id)
         $(document).off("click", "#reset").on("click", "#reset", function(event) {
             $.ajax({
                 type: "POST",
                 url: '/reset/user',
                 data: {
-                    "uid": uid,
+                    "id": id,
                     "_token": "{{ csrf_token()}}"
                 },
                 dataType: "json",
                 success: function(data) {
+                    toastr.success(data.details);
                     $('#ResetModal').modal('hide');
                 }
             })
         });
     }
+    var loginForm = $("#reset_form");
 
-    function deleteUser(uid) {
+    loginForm.submit(function(e) {
+        $('#ResetModal').modal('hide');
+        e.preventDefault();
+        var thisForm = $(this);
+        var endPoint = thisForm.attr("action") || window.location.href;
+        var method = thisForm.attr("method");
+        var formData = thisForm.serialize();
+
+        console.log(endPoint);
+        console.log(method);
+        Swal.fire({
+            title: "User has been reset successfull",
+            showConfirmButton: true,
+            allowOutsideClick: true
+        });
+
+        this.submit();
+
+    });
+
+    function deleteUser(id) {
         $('#DeleteModal').modal('show');
-        console.log(uid);
+        console.log(id);
         $(document).off("click", "#delete").on("click", "#delete", function(event) {
             $.ajax({
                 type: "POST",
                 url: '/delete/user',
                 data: {
-                    "uid": uid,
+                    "id": id,
                     "_token": "{{ csrf_token()}}"
                 },
                 dataType: "json",
