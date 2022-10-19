@@ -79,13 +79,14 @@ class UserController extends Controller
             'agency_id' => $request->get('agency'),
             'msisdn' => $request->get('phone'),
         ]);
+        $provider = Provider::create([
+            'mfl_code' => $request->get('mflcode'),
+            'msisdn' => $request->get('phone'),
+            'person_id' => $pid,
+        ]);
 
         if ($request->role == '3') {
-            $provider = Provider::create([
-                'mfl_code' => $request->get('mflcode'),
-                'msisdn' => $request->get('phone'),
-                'person_id' => $pid,
-            ]);
+
             $user_provider = ProviderUser::create([
                 'username' => $request->get('firstname'),
                 'email' => $request->get('email'),
@@ -93,9 +94,9 @@ class UserController extends Controller
             ]);
         }
 
-        if ($person && $user || $provider || $user_provider) {
+        if ($person && $user && $provider || $user_provider) {
             Alert::success('Success', 'You\'ve Successfully Registered User');
-            return back();
+            //return back();
             //return redirect('users/user');
         } else {
             Alert::error('Failed', 'Registration failed');
