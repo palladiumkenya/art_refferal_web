@@ -96,8 +96,7 @@ class UserController extends Controller
 
         if ($person && $user && $provider || $user_provider) {
             Alert::success('Success', 'You\'ve Successfully Registered User');
-            //return back();
-            //return redirect('users/user');
+            return redirect('user');
         } else {
             Alert::error('Failed', 'Registration failed');
             return back();
