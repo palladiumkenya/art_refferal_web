@@ -16,14 +16,14 @@
                 <div class="dropdown-menu text-left" aria-labelledby="dropdownMenuButton">
                     <div class="row m-0">
 
-                        <div class="col-md-4 p-4">
+                        <div class="col-md-6 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
 
-                                <a href="/home"><i class="i-Shop-4"></i> Home</a>
-                                <a href="{{route('patients.list')}}"><i class="i-Drop"></i> Patients</a>
-                                <a href="{{route('providers.list')}}"><i class="i-Drop"></i> Providers</a>
-                                <a href="{{route('patients.search')}}"><i class="i-Drop"></i> Patient Details</a>
+                                <a href="/home"><i class="i-Home1"></i> Home</a>
+                                <a href="{{route('patients.list')}}"><i class="i-Add-User"></i> Patients</a>
+                                <a href="{{route('providers.list')}}"><i class="i-Doctor"></i> Providers</a>
+                                <a href="{{route('patients.search')}}"><i class="i-Find-User"></i> Patient Details</a>
 
                             </div>
                         </div>
@@ -35,15 +35,15 @@
                 <div class="dropdown-menu text-left" aria-labelledby="dropdownMenuButton">
                     <div class="row m-0">
 
-                        <div class="col-md-4 p-4">
+                        <div class="col-md-5 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
-                                <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
+                                <a href="{{route('user')}}"><i class="i-Checked-User"></i> Users</a>
                                 @can('role-list')
-                                <a href="{{ route('roles.index') }}"><i class="i-Library"></i> Roles</a>
+                                <a href="{{ route('roles.index') }}"><i class="i-Check"></i> Roles</a>
                                 @endcan
                                 @can('permission-list')
-                                <a href="{{ route('permissions.index') }}"><i class="i-Library"></i> Permissions</a>
+                                <a href="{{ route('permissions.index') }}"><i class="i-Unlock-2"></i> Permissions</a>
                                 @endcan
                             </div>
                         </div>
@@ -55,11 +55,11 @@
                 <div class="dropdown-menu text-left" aria-labelledby="dropdownMenuButton">
                     <div class="row m-0">
 
-                        <div class="col-md-4 p-4">
+                        <div class="col-md-6 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
 
-                                <a href="/referral"><i class="i-Shop-4"></i> Referral</a>
+                                <a href="/referral"><i class="i-Library"></i> Referral</a>
 
                             </div>
                         </div>
