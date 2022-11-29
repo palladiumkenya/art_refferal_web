@@ -15,7 +15,7 @@
     @yield('before-css')
 
     {{-- theme css --}}
-
+    <link id="gull-theme" rel="stylesheet" href="{{ asset('assets\fonts\iconsmind\iconsmind.css') }}">
     <link rel="stylesheet" href="{{asset('assets/styles/css/themes/lite-blue.min.css')}}">
 
     <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">

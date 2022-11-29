@@ -3,6 +3,10 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.css')}}">
  <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 @endsection
+@section('page-css')
+
+<link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
+@endsection
 
 @section('main-content')
 {{-- Alert Messages --}}

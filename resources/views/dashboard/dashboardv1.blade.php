@@ -26,7 +26,7 @@
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
-                <i class="i-Financial"></i>
+                <i class="i-Doctor"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Providers</p>
                     <p class="text-primary text-24 line-height-1 mb-2">40</p>
@@ -38,7 +38,7 @@
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
-                <i class="i-Checkout-Basket"></i>
+                <i class="i-Inbox-Into"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers In</p>
                     <p class="text-primary text-24 line-height-1 mb-2">251</p>
@@ -50,7 +50,7 @@
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
-                <i class="i-Money-2"></i>
+                <i class="i-Inbox-Out"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers Out</p>
                     <p class="text-primary text-24 line-height-1 mb-2">221</p>
