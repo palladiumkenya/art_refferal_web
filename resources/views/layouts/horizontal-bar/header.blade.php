@@ -38,7 +38,11 @@
                         <div class="col-md-4 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
+
                                 <a href="{{route('user')}}"><i class="i-Library"></i> Users</a>
+
+                                <a href="{{ route('facilities.index') }}"><i class="i-Library"></i> Facilities</a>
+
                                 @can('role-list')
                                 <a href="{{ route('roles.index') }}"><i class="i-Library"></i> Roles</a>
                                 @endcan

@@ -11,16 +11,48 @@ use App\Imports\ProvidersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Exception;
+use Auth;
 
 class ProviderController extends Controller
 {
     private function providersList()
     {
-        return DB::table('tbl_person')
-        ->join('tbl_provider', 'tbl_person.person_id', '=', 'tbl_provider.person_id')
-        ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
-        ->select('tbl_person.person_id','tbl_person.firstname', 'tbl_person.middlename', 'tbl_person.lastname', 'tbl_provider.msisdn','tbl_provider.mfl_code', 'tbl_master_facility.name as facility')
-        ->get();
+        if (Auth::user()->role_id == '1') {
+            return DB::table('tbl_person')
+                ->join('tbl_provider', 'tbl_person.person_id', '=', 'tbl_provider.person_id')
+                ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
+                ->select('tbl_person.person_id', 'tbl_person.firstname', 'tbl_person.middlename', 'tbl_person.lastname', 'tbl_provider.msisdn', 'tbl_provider.mfl_code', 'tbl_master_facility.name as facility')
+                ->get();
+        }
+        if (Auth::user()->role_id == '2') {
+            return DB::table('tbl_person')
+                ->join('tbl_provider', 'tbl_person.person_id', '=', 'tbl_provider.person_id')
+                ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
+                ->join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                ->select('tbl_person.person_id', 'tbl_person.firstname', 'tbl_person.middlename', 'tbl_person.lastname', 'tbl_provider.msisdn', 'tbl_provider.mfl_code', 'tbl_master_facility.name as facility')
+                ->where('tbl_location.partner_id', Auth::user()->partner_id)
+                ->get();
+        }
+        if (Auth::user()->role_id == '3') {
+            return DB::table('tbl_person')
+                ->join('tbl_provider', 'tbl_person.person_id', '=', 'tbl_provider.person_id')
+                ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
+                ->join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                ->select('tbl_person.person_id', 'tbl_person.firstname', 'tbl_person.middlename', 'tbl_person.lastname', 'tbl_provider.msisdn', 'tbl_provider.mfl_code', 'tbl_master_facility.name as facility')
+                ->where('tbl_location.mfl_code', Auth::user()->mfl_code)
+                ->get();
+        }
+        if (Auth::user()->role_id == '4') {
+            return DB::table('tbl_person')
+                ->join('tbl_provider', 'tbl_person.person_id', '=', 'tbl_provider.person_id')
+                ->join('tbl_master_facility', 'tbl_provider.mfl_code', '=', 'tbl_master_facility.code')
+                ->join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                ->join('tbl_partner', 'tbl_partner.partner_id', '=', 'tbl_location.partner_id')
+                ->join('tbl_agency', 'tbl_agency.partner_id', '=', 'tbl_partner.partner_id')
+                ->select('tbl_person.person_id', 'tbl_person.firstname', 'tbl_person.middlename', 'tbl_person.lastname', 'tbl_provider.msisdn', 'tbl_provider.mfl_code', 'tbl_master_facility.name as facility')
+                ->where('tbl_partner.agency_id', Auth::user()->agency_id)
+                ->get();
+        }
     }
 
     private function facilitiesList()
@@ -34,7 +66,7 @@ class ProviderController extends Controller
     {
         $providers = $this->providersList();
         $facilities = $this->facilitiesList();
-        return view('providers.providers', compact('providers','facilities'));
+        return view('providers.providers', compact('providers', 'facilities'));
     }
 
     public function create(Request $request)
@@ -47,7 +79,7 @@ class ProviderController extends Controller
     public function store(Request $request)
     {
 
-            // validate request
+        // validate request
         $validated = $request->validate([
             'firstname' => ['required', 'string', 'max:150'],
             'middlename' => ['max:150'],
@@ -57,21 +89,21 @@ class ProviderController extends Controller
 
         //DB::transaction(function ($request) {
 
-            //create a new person record
-            $person =  Person::create([
-                'firstname' => $request->get('firstname'),
-                'middlename' => $request->get('middlename'),
-                'lastname' => $request->get('lastname'),
-            ]);
+        //create a new person record
+        $person =  Person::create([
+            'firstname' => $request->get('firstname'),
+            'middlename' => $request->get('middlename'),
+            'lastname' => $request->get('lastname'),
+        ]);
 
-            //create provider record
-           Provider::create([
-                'person_id' => $person['person_id'],
-                'msisdn' => $request->get('phone'),
-                'mfl_code' => $request->get('facility'),
-            ]);
+        //create provider record
+        Provider::create([
+            'person_id' => $person['person_id'],
+            'msisdn' => $request->get('phone'),
+            'mfl_code' => $request->get('facility'),
+        ]);
 
-            return redirect()->route('providers.list');
+        return redirect()->route('providers.list');
 
         //});
     }
@@ -92,7 +124,7 @@ class ProviderController extends Controller
                 'msisdn' => $request->phone,
             ]);
 
-      if ($person) {
+        if ($person) {
             Alert::success('Success', 'You\'ve Successfully Updated the Provider Record');
             return back();
         } elseif ($provider) {

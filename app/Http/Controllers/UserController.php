@@ -14,6 +14,7 @@ use App\Models\Permission;
 use App\Models\Partner;
 use App\Models\Agency;
 use App\Models\ProviderUser;
+use Auth;
 
 
 class UserController extends Controller
@@ -104,7 +105,8 @@ class UserController extends Controller
     }
     public function user()
     {
-        $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
+        if (Auth::user()->role_id == '1') {
+            $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
             ->join('tbl_person', 'users.person_id', '=', 'tbl_person.person_id')
             ->join('roles', 'roles.id', '=', 'users.role_id')
             ->select(
@@ -123,6 +125,74 @@ class UserController extends Controller
             )
             ->where('users.is_active', '=', '1')
             ->get();
+        }
+        if (Auth::user()->role_id == '2') {
+            $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
+            ->join('tbl_person', 'users.person_id', '=', 'tbl_person.person_id')
+            ->join('roles', 'roles.id', '=', 'users.role_id')
+            ->select(
+                'tbl_provider.msisdn as phone',
+                'tbl_person.firstname',
+                'tbl_person.middlename',
+                'tbl_person.lastname',
+                'users.id as id',
+                'users.person_id as person_id',
+                'users.email',
+                'roles.name as role',
+                'users.role_id',
+                'users.agency_id',
+                'users.partner_id',
+                'users.mfl_code'
+            )
+            ->where('users.is_active', '=', '1')
+            ->where('users.partner_id', Auth::user()->partner_id)
+            ->get();
+        }
+        if (Auth::user()->role_id == '3') {
+            $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
+            ->join('tbl_person', 'users.person_id', '=', 'tbl_person.person_id')
+            ->join('roles', 'roles.id', '=', 'users.role_id')
+            ->select(
+                'tbl_provider.msisdn as phone',
+                'tbl_person.firstname',
+                'tbl_person.middlename',
+                'tbl_person.lastname',
+                'users.id as id',
+                'users.person_id as person_id',
+                'users.email',
+                'roles.name as role',
+                'users.role_id',
+                'users.agency_id',
+                'users.partner_id',
+                'users.mfl_code'
+            )
+            ->where('users.is_active', '=', '1')
+            ->where('users.mfl_code', Auth::user()->mfl_code)
+            ->get();
+        }
+        if (Auth::user()->role_id == '3') {
+            $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
+            ->join('tbl_person', 'users.person_id', '=', 'tbl_person.person_id')
+            ->join('roles', 'roles.id', '=', 'users.role_id')
+            ->select(
+                'tbl_provider.msisdn as phone',
+                'tbl_person.firstname',
+                'tbl_person.middlename',
+                'tbl_person.lastname',
+                'users.id as id',
+                'users.person_id as person_id',
+                'users.email',
+                'roles.name as role',
+                'users.role_id',
+                'users.agency_id',
+                'users.partner_id',
+                'users.mfl_code'
+            )
+            ->where('users.is_active', '=', '1')
+            ->where('users.agency_id', Auth::user()->agency_id)
+            ->get();
+        }
+
 
         $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
             ->select('tbl_master_facility.code', 'tbl_master_facility.name')

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\FacilityController;
 
 
 /*
@@ -42,6 +43,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+
+    Route::resource('facilities', FacilityController::class);
 
     Route::get('/logout', ['uses' => 'App\Http\Controllers\Auth\LoginController@logout', 'as' => 'logout']);
 
@@ -111,6 +114,8 @@ Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@ind
     Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
 
     Route::get('/referral', ['uses' => 'App\Http\Controllers\ReferralController@referral', 'as' => 'referral']);
+    Route::post('/facilities/update', ['uses' => 'App\Http\Controllers\FacilityController@update', 'as' => 'facilities.update']);
+
 });
 // Route::group(['middleware' => 'auth'], function () {
 
