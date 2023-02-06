@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helper\Helper;
+use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
 {
@@ -27,6 +28,18 @@ class PatientController extends Controller
     public function create()
     {
         //
+    }
+
+    public function register(Request $request)
+    {
+        $data = array();
+        $patientData = $request->all();
+        Log::debug($patientData);
+        // $data['firstname'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        // $data['middlename'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        // $data['lastname'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        // $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        // $data['ccc_no'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
     }
 
     /**
