@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helper\Helper;
-use Illuminate\Support\Facades\Log;
+//use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
 {
@@ -32,14 +32,51 @@ class PatientController extends Controller
 
     public function register(Request $request)
     {
+        $person = array();
         $data = array();
         $patientData = $request->all();
-        Log::debug($patientData);
-        // $data['firstname'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-        // $data['middlename'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-        // $data['lastname'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-        // $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-        // $data['ccc_no'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        //Log::debug($patientData);
+
+        $data['upi'] = null;
+        $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
+        $data['middlename'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["MIDDLE_NAME"];
+        $data['lastname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["LAST_NAME"];
+        $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
+        $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
+        $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
+        $data['art_start_date'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+        $data['date_enrolled_in_facility'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+        $data['tca'] = $patientData["PATIENT_VISIT"]["VISIT_DATE"];
+
+        foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
+        {
+            $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
+        }
+
+        $data['viral_load'] = null;
+        $data['regimen'] = null;
+
+        foreach($patientData["OBSERVATION_RESULT"] as $obs)
+        {
+           switch($obs['OBSERVATION_IDENTIFIER'])
+           {
+                case "ART_START":
+                    $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
+                break;
+                case "CURRENT_REGIMEN":
+                    $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                break;
+           }
+        }
+
+        $person[] = Helper::PatientStore($data);
+
+        if(count($person)>0){
+            return response()->json(['status' =>"success",'message'=>$patientData]);
+        }else{
+            return response()->json(['status' =>"fail",'message'=>'Failure while inserting patient record']);
+        }
     }
 
     /**
