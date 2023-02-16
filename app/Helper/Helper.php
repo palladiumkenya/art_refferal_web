@@ -99,4 +99,54 @@ class Helper
 
     }
 
+
+    public function AppointmentStore($data)
+    {
+        $person = array();
+
+        //check if the patient exists
+        if (DB::table('tbl_patient')
+            ->where('ccc_no', $data['CCC_NUMBER'])
+            ->exists())
+            {
+                //update existing patient record
+                $rec = Patient::firstWhere('ccc_no', $data['CCC_NUMBER']);
+
+                $patient = Patient::where('patient_id', $rec['patient_id'])
+                ->update([
+                    'gender' => $data['gender'],
+                    'ccc_no' => $data['CCC_NUMBER'],
+                    'patient_clinic_no' => $data['PATIENT_CLINIC_NUMBER'],
+                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'date_of_birth' => date('Y-m-d', strtotime($data['date_of_birth'])),
+                    //'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
+                    'msidn' => $data['phone_no'],
+                ]);
+
+           
+                
+                //Update TCA
+                PatientObservation::where('patient_id', $rec['patient_id'])
+                ->update([
+                    'mfl_code' => $data['mfl_code'],
+                    'viral_load' => $data['viral_load'],
+                    'regimen' => $data['regimen'],
+                    'tca' => date('Y-m-d', strtotime($data['tca'])),
+                ]);
+
+
+               
+
+               
+            }
+            else
+            {
+                
+            }
+
+        return  $person;
+
+    }
+
+
 }
