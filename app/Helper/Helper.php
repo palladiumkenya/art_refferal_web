@@ -31,7 +31,7 @@ class Helper
                     'person_id' => $person['person_id'],
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
-                    'patient_clinic_no' => $data['PATIENT_CLINIC_NUMBER'],
+                    'patient_clinic_no' => $data['CCC_NUMBER'],
                     'upi' => $data['upi'] == '' ? null : $data['upi'],
                     'date_of_birth' => date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
@@ -73,7 +73,7 @@ class Helper
                 ->update([
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
-                    'patient_clinic_no' => $data['PATIENT_CLINIC_NUMBER'],
+                    'patient_clinic_no' => $data['CCC_NUMBER'],
                     'upi' => $data['upi'] == '' ? null : $data['upi'],
                     'date_of_birth' => date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
@@ -116,15 +116,15 @@ class Helper
                 ->update([
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
-                    'patient_clinic_no' => $data['PATIENT_CLINIC_NUMBER'],
+                    'patient_clinic_no' => $data['CCC_NUMBER'],
                     'upi' => $data['upi'] == '' ? null : $data['upi'],
                     'date_of_birth' => date('Y-m-d', strtotime($data['date_of_birth'])),
                     //'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
                 ]);
 
-           
-                
+
+
                 //Update TCA
                 PatientObservation::where('patient_id', $rec['patient_id'])
                 ->update([
@@ -135,13 +135,13 @@ class Helper
                 ]);
 
 
-               
 
-               
+
+
             }
             else
             {
-                
+
             }
 
         return  $person;
