@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\DataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post("/patients", [PatientController::class, "register"]);
+Route::get("/directory/{code}/{name}", [DataController::class, "directory"]);
+Route::get("/patient/{cccno}/regimen", [DataController::class, "patient_regimen"]);
