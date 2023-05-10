@@ -14,13 +14,11 @@ class Patient extends Model
     protected $fillable = [
         'person_id',
         'ccc_no',
+        'patient_clinic_no',
         'upi',
-        'mfl_code',
+        'gender',
         'date_of_birth',
         'art_start_date',
-        'viral_load',
-        'regimen',
-        'tca',
         'msidn',
         'source',
     ];
