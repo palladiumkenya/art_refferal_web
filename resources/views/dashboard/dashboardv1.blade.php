@@ -17,7 +17,7 @@
                 <i class="i-Add-User"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Patients</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">2051</p>
+                    <p class="text-primary text-24 line-height-1 mb-2">{{number_format(count($patients))}}</p>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                 <i class="i-Doctor"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Providers</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">40</p>
+                    <p class="text-primary text-24 line-height-1 mb-2">{{number_format(count($providers))}}</p>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 <i class="i-Inbox-Into"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers In</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">251</p>
+                    <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_in)) }}</p>
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                 <i class="i-Inbox-Out"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers Out</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">221</p>
+                    <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p>
                 </div>
             </div>
         </div>

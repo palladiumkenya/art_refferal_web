@@ -30,7 +30,7 @@ class ReferralController extends Controller
                 ->where('tbl_location.mfl_code', Auth::user()->mfl_code)
                 ->get();
         }
-        if (Auth::user()->role_id == '3') {
+        if (Auth::user()->role_id == '4') {
             $referral_details = Referral::join('tbl_location', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_location.mfl_code')
                 ->join('tbl_master_facility', 'tbl_location.mfl_code', '=', 'tbl_master_facility.code')
                 ->join('tbl_partner', 'tbl_partner.partner_id', '=', 'tbl_location.partner_id')
