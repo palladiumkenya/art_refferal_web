@@ -31,6 +31,7 @@ class DataController extends Controller
                     ->select('tbl_master_facility.code','tbl_master_facility.name','tbl_master_facility.facility_type','tbl_location_details.telephone')
                     ->where($where)->orWhere($orwhere)
                     ->orderBy('tbl_master_facility.name', 'asc')
+                    ->distinct()
                     ->get();
 
         return response()->json(['status' =>"success",'message'=>$facility]);
@@ -43,7 +44,7 @@ class DataController extends Controller
         $patient = Person::join('tbl_patient', 'tbl_person.person_id', '=', 'tbl_patient.person_id')
         ->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
         ->where('tbl_patient.ccc_no',$ccc_no)
-        ->select('tbl_person.firstname','tbl_person.middlename','tbl_person.lastname','tbl_patient.ccc_no','tbl_patient_observations.regimen')
+        ->select('tbl_person.firstname','tbl_person.middlename','tbl_person.lastname','tbl_patient.ccc_no',DB::raw("IFNULL(tbl_patient_observations.regimen,'')"))
         ->get();
 
         return response()->json(['status' =>"success",'message'=>$patient]);
