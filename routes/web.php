@@ -112,6 +112,7 @@ Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@ind
     Route::post('/providers/upload', ['uses' => 'App\Http\Controllers\ProviderController@upload', 'as' => 'providers.upload']);
 
     Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
+    Route::get('/data', ['uses' => 'App\Http\Controllers\DashboardController@data', 'as' => 'data']);
 
     Route::get('/referral', ['uses' => 'App\Http\Controllers\ReferralController@referral', 'as' => 'referral']);
     Route::post('/facilities/update', ['uses' => 'App\Http\Controllers\FacilityController@update', 'as' => 'facilities.update']);

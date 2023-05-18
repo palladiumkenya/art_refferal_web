@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Referral;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReferralController extends Controller
 {
@@ -13,7 +14,8 @@ class ReferralController extends Controller
         if (Auth::user()->role_id == '1') {
             $referral_details = Referral::join('tbl_location', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_location.mfl_code')
                 ->join('tbl_master_facility', 'tbl_location.mfl_code', '=', 'tbl_master_facility.code')
-                ->select('tbl_refferal.ccc_no', 'tbl_refferal.referral_type', 'tbl_refferal.initiator_mfl_code', 'tbl_refferal.reffered_mfl_code', 'tbl_refferal.initiation_date')
+                // ->select('tbl_refferal.ccc_no', 'tbl_refferal.referral_type', 'tbl_refferal.initiator_mfl_code', 'tbl_refferal.reffered_mfl_code', 'tbl_refferal.initiation_date')
+                ->select('tbl_refferal.ccc_no', 'tbl_refferal.referral_type', DB::raw("CASE WHEN tbl_refferal.referral_type = 'Silent' THEN CONCAT(tbl_master_facility.name, ' - ', tbl_refferal.initiator_mfl_code) END as initiator_mfl_code"),  DB::raw("CASE WHEN tbl_refferal.referral_type = 'Normal' THEN CONCAT(tbl_master_facility.name, ' - ', tbl_refferal.reffered_mfl_code) END as reffered_mfl_code"), 'tbl_refferal.initiation_date')
                 ->get();
         }
         if (Auth::user()->role_id == '2') {
