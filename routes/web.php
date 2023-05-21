@@ -97,7 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/patients/referral/store', ['uses' => 'App\Http\Controllers\PatientController@referral_store', 'as' => 'patients.referral.store']);
 
-Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
+    Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@index', 'as' => 'providers.list']);
 
     Route::get('/providers/create', ['uses' => 'App\Http\Controllers\ProviderController@create', 'as' => 'providers.create']);
 
@@ -113,10 +113,10 @@ Route::get('/providers', ['uses' => 'App\Http\Controllers\ProviderController@ind
 
     Route::get('/home', ['uses' => 'App\Http\Controllers\DashboardController@index', 'as' => 'home']);
     Route::get('/data', ['uses' => 'App\Http\Controllers\DashboardController@data', 'as' => 'data']);
+    Route::get('/filter_data', ['uses' => 'App\Http\Controllers\DashboardController@filter_data', 'as' => 'filter_data']);
 
     Route::get('/referral', ['uses' => 'App\Http\Controllers\ReferralController@referral', 'as' => 'referral']);
     Route::post('/facilities/update', ['uses' => 'App\Http\Controllers\FacilityController@update', 'as' => 'facilities.update']);
-
 });
 // Route::group(['middleware' => 'auth'], function () {
 

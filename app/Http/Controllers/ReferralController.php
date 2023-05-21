@@ -24,6 +24,9 @@ class ReferralController extends Controller
                 ->select('tbl_refferal.ccc_no', 'tbl_refferal.referral_type', 'tbl_refferal.initiator_mfl_code', 'tbl_refferal.reffered_mfl_code', 'tbl_refferal.initiation_date')
                 ->where('tbl_location.partner_id', Auth::user()->partner_id)
                 ->get();
+            $test = ReferralData::select('*')
+                ->where('partner_id', Auth::user()->partner_id)
+                ->get();
         }
         if (Auth::user()->role_id == '3') {
             $referral_details = Referral::join('tbl_location', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_location.mfl_code')
