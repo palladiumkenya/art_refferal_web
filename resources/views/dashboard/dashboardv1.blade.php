@@ -8,71 +8,68 @@
 </div>
 
 <div class="separator-breadcrumb border-top"></div>
-<form role="form" method="post" action="#" id="dataFilter">
-    {{ csrf_field() }}
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label for=" partners" class="col-form-label"><b>Partner</b></label>
-                <select class="form-control select2" id="partnerFilter">
-                    <option></option>
-                    @foreach ($partners as $partner)
-                    <option value="{{ $partner->partner_id }}">{{ $partner->partner_name }}</option>
-                    @endforeach
-                </select>
+<div class="col-md-12">
+    <form role="form" method="post" action="#" id="dataFilter">
+        {{ csrf_field() }}
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <select class="form-control select2" id="partners" name="partner">
+                        <option></option>
+                        @foreach ($partners as $partner)
+                        <option value="{{ $partner->partner_id }}">{{ ucwords($partner->partner_name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label for=" counties" class="col-form-label"><b>County</b></label>
-                <select id="countyFilter">
-                    <option></option>
-                    @foreach ($counties as $county)
-                    <option value="{{ $county->id }}">{{ $county->name }}</option>
-                    @endforeach
-                </select>
+            <div class="col">
+                <div class="form-group">
+                    <select id="counties" name="county">
+                        <option></option>
+                        @foreach ($counties as $county)
+                        <option value="{{ $county->id }}">{{ ucwords($county->name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                <label for=" facilities" class="col-form-label"><b>Facility</b></label>
-                <select id="facilityFilter">
-                    <option></option>
-                    @foreach ($facilities as $facility)
-                    <option value="{{ $facility->code }}">{{ $facility->name }}</option>
-                    @endforeach
-                </select>
+            <div class="col">
+                <div class="form-group">
+                    <select id="facilities" name="facility">
+                        <option></option>
+                        @foreach ($facilities as $facility)
+                        <option value="{{ $facility->code }}">{{ ucwords($facility->name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="col">
+            <div class="col">
 
-            <div class="form-group">
-                <label for="daterange" class="col-form-label"><b>Date Range</b></label>
-                <input class="form-control" id="daterange" type="text" name="daterange" />
-            </div>
-            <div class="form-group">
-                <label for="daterange" class="col-form-label"></label>
-                <button type="submit" class="btn btn-warning"><b>Filter</b> <i class="i-Filter"></i></button>
-            </div>
-        </div>
-    </div>
-</form>
-<div class="separator-breadcrumb border-top"></div>
-<div class="row">
-    <!-- ICON BG -->
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center">
-                <i class="i-Add-User"></i>
-                <div class="content">
-                    <p class="text-muted mt-2 mb-0">Patients</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">{{number_format(count($patients))}}</p>
+                <div class="form-group">
+                    <input class="form-control" id="daterange" type="text" name="daterange" />
+                </div>
+                <div class="form-group">
+                    <label for="daterange" class="col-form-label"></label>
+                    <button type="submit" class="btn btn-warning"><b>Filter</b> <i class="i-Filter"></i></button>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
+    <div class="separator-breadcrumb border-top"></div>
+    <div class="row">
+        <!-- ICON BG -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="card-body text-center">
+                    <i class="i-Add-User"></i>
+                    <div class="content">
+                        <p class="text-muted mt-2 mb-0">Patients</p>
+                        <p id="patients" class="text-primary text-24 line-height-1 mb-2"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- <div class="col-lg-2 col-md-6 col-sm-6">
+        <!-- <div class="col-lg-2 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
                 <i class="i-Doctor"></i>
@@ -84,74 +81,75 @@
         </div>
     </div> -->
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center">
-                <i class="i-Inbox-Into"></i>
-                <div class="content">
-                    <p class="text-muted mt-2 mb-0">Transfers In</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_in)) }}</p>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="card-body text-center">
+                    <i class="i-Inbox-Into"></i>
+                    <div class="content">
+                        <p class="text-muted mt-2 mb-0">Transfers In</p>
+                        <p id="transfer_in" class="text-primary text-24 line-height-1 mb-2"></p>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="card-body text-center">
+                    <i class="i-Inbox-Out"></i>
+                    <div class="content">
+                        <p class="text-muted mt-2 mb-0">Transfers Out</p>
+                        <p id="transfer_out" class="text-primary text-24 line-height-1 mb-2"></p>
+                        <!-- <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="card-body text-center">
+                    <i class="i-Inbox-Out"></i>
+                    <div class="content">
+                        <p class="text-muted mt-2 mb-0">Transit</p>
+                        <p id="transit" class="text-primary text-24 line-height-1 mb-2"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center">
-                <i class="i-Inbox-Out"></i>
-                <div class="content">
-                    <p class="text-muted mt-2 mb-0">Transfers Out</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p>
+    <div class="row">
+        <input id="authenticated" type="hidden" value="{{ auth()->user()->role_id }}">
+        <div class="col-lg-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="month_transfer" style="height: 400px;">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center">
-                <i class="i-Inbox-Out"></i>
-                <div class="content">
-                    <p class="text-muted mt-2 mb-0">Transit</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transit)) }}</p>
+        @if (Auth::user()->role_id == '1')
+        <div class="col-lg-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="partner_transfer" style="height: 400px;">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-</div>
-
-<div class="row">
-    <input id="authenticated" type="hidden" value="{{ auth()->user()->role_id }}">
-    <div class="col-lg-12 col-md-12">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div id="month_transfer" style="height: 400px;">
+        @endif
+        @if (Auth::user()->role_id == '2')
+        <div class="col-lg-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="facility_transfer" style="height: 400px;">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    @if (Auth::user()->role_id == '1')
-    <div class="col-lg-12 col-md-12">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div id="partner_transfer" style="height: 400px;">
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-    @if (Auth::user()->role_id == '2')
-    <div class="col-lg-12 col-md-12">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div id="facility_transfer" style="height: 400px;">
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-    <!-- <div class="col-lg-4 col-sm-12">
+        @endif
+        <!-- <div class="col-lg-4 col-sm-12">
         <div class="card mb-4">
             <div class="card-body">
                 <div class="card-title">Sales by Countries</div>
@@ -159,6 +157,7 @@
             </div>
         </div>
     </div> -->
+    </div>
 </div>
 
 
@@ -182,20 +181,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript">
     let authenticated = $('#authenticated').val();
     $("select").select2();
-    $('#facilityFilter').select2({
+    $('#facilities').select2({
         width: 'element',
         placeholder: "Select Facility",
         allowClear: true
     });
-    $('#partnerFilter').select2({
+    $('#partners').select2({
         width: 'element',
         placeholder: "Select Partner",
         allowClear: true
     });
-    $('#countyFilter').select2({
+    $('#counties').select2({
         width: 'element',
         placeholder: "Select County",
         allowClear: true
@@ -203,7 +205,7 @@
 
     $(function() {
         $('#daterange').daterangepicker({
-            "minYear": 2017,
+            "minYear": 2022,
             "autoApply": true,
             ranges: {
                 'Today': [moment(), moment()],
@@ -214,7 +216,7 @@
                 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
                     'month').endOf('month')]
             },
-            "startDate": "04/10/2017",
+            "startDate": "01/09/2022",
             "endDate": moment().format('MM/DD/YYYY'),
             "opens": "left"
         }, function(start, end, label) {});
@@ -230,13 +232,19 @@
         url: "{{ route('data') }}",
         success: function(data) {
             monthTransfer(data.month_transfers);
+            $("#transfer_in").html(data.transfers[0].transfer_in);
+            $("#transfer_out").html(data.transfers[0].transfer_out);
+            $("#transit").html(data.transfers[0].transit);
+            $("#patients").html(data.patients);
+
             if (authenticated == '2') {
                 facilityTransfer(data.facility_transfers);
             }
             if (authenticated == '1') {
                 partnerTransfer(data.partner_transfers);
             }
-            console.log(data.month_transfers);
+            console.log(data.patients);
+            console.log(data);
         }
     });
 
@@ -251,6 +259,11 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        Swal.fire({
+            title: "loading data...",
+            showConfirmButton: false,
+            allowOutsideClick: false
+        });
         $.ajax({
             type: 'GET',
             data: {
@@ -262,12 +275,17 @@
             url: "{{ route('filter_data') }}",
             success: function(data) {
                 monthTransfer(data.month_transfers);
+                $("#transfer_in").html(data.transfers[0].transfer_in);
+                $("#transfer_out").html(data.transfers[0].transfer_out);
+                $("#transit").html(data.transfers[0].transit);
+                $("#patients").html(data.patients);
                 if (authenticated == '2') {
                     facilityTransfer(data.facility_transfers);
                 }
                 if (authenticated == '1') {
                     partnerTransfer(data.partner_transfers);
                 }
+                Swal.close();
             }
         });
     });
