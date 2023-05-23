@@ -8,6 +8,7 @@
 </div>
 
 <div class="separator-breadcrumb border-top"></div>
+@if (Auth::user()->role_id == '1')
 <div class="col-md-12">
     <form role="form" method="post" action="#" id="dataFilter">
         {{ csrf_field() }}
@@ -54,22 +55,83 @@
             </div>
         </div>
     </form>
-    <div class="separator-breadcrumb border-top"></div>
-    <div class="row">
-        <!-- ICON BG -->
-        <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                <div class="card-body text-center">
-                    <i class="i-Add-User"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">Patients</p>
-                        <p id="patients" class="text-primary text-24 line-height-1 mb-2"></p>
-                    </div>
+</div>
+@endif
+@if (Auth::user()->role_id == '2')
+<div class="col-md-12">
+    <form role="form" method="post" action="#" id="dataFilter">
+        {{ csrf_field() }}
+        <div class="row">
+
+            <div class="col">
+                <div class="form-group">
+                    <select id="counties" name="county">
+                        <option></option>
+                        @foreach ($counties as $county)
+                        <option value="{{ $county->id }}">{{ ucwords($county->name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <select id="facilities" name="facility">
+                        <option></option>
+                        @foreach ($facilities as $facility)
+                        <option value="{{ $facility->code }}">{{ ucwords($facility->name) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+
+                <div class="form-group">
+                    <input class="form-control" id="daterange" type="text" name="daterange" />
+                </div>
+                <div class="form-group">
+                    <label for="daterange" class="col-form-label"></label>
+                    <button type="submit" class="btn btn-warning"><b>Filter</b> <i class="i-Filter"></i></button>
                 </div>
             </div>
         </div>
+    </form>
+</div>
+@endif
+@if (Auth::user()->role_id == '3')
+<div class="col-md-12">
+    <form role="form" method="post" action="#" id="dataFilter">
+        {{ csrf_field() }}
+        <div class="row">
+            <div class="col">
 
-        <!-- <div class="col-lg-2 col-md-6 col-sm-6">
+                <div class="form-group">
+                    <input class="form-control" id="daterange" type="text" name="daterange" />
+                </div>
+                <div class="form-group">
+                    <label for="daterange" class="col-form-label"></label>
+                    <button type="submit" class="btn btn-warning"><b>Filter</b> <i class="i-Filter"></i></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@endif
+<div class="separator-breadcrumb border-top"></div>
+<div class="row">
+    <!-- ICON BG -->
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center">
+                <i class="i-Add-User"></i>
+                <div class="content">
+                    <p class="text-muted mt-2 mb-0">Patients</p>
+                    <p id="patients" class="text-primary text-24 line-height-1 mb-2"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="col-lg-2 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
                 <i class="i-Doctor"></i>
@@ -81,75 +143,75 @@
         </div>
     </div> -->
 
-        <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                <div class="card-body text-center">
-                    <i class="i-Inbox-Into"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">Transfers In</p>
-                        <p id="transfer_in" class="text-primary text-24 line-height-1 mb-2"></p>
-                    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center">
+                <i class="i-Inbox-Into"></i>
+                <div class="content">
+                    <p class="text-muted mt-2 mb-0">Transfers In</p>
+                    <p id="transfer_in" class="text-primary text-24 line-height-1 mb-2"></p>
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                <div class="card-body text-center">
-                    <i class="i-Inbox-Out"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">Transfers Out</p>
-                        <p id="transfer_out" class="text-primary text-24 line-height-1 mb-2"></p>
-                        <!-- <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                <div class="card-body text-center">
-                    <i class="i-Inbox-Out"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">Transit</p>
-                        <p id="transit" class="text-primary text-24 line-height-1 mb-2"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div class="row">
-        <input id="authenticated" type="hidden" value="{{ auth()->user()->role_id }}">
-        <div class="col-lg-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div id="month_transfer" style="height: 400px;">
-                    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center">
+                <i class="i-Inbox-Out"></i>
+                <div class="content">
+                    <p class="text-muted mt-2 mb-0">Transfers Out</p>
+                    <p id="transfer_out" class="text-primary text-24 line-height-1 mb-2"></p>
+                    <!-- <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p> -->
                 </div>
             </div>
         </div>
-        @if (Auth::user()->role_id == '1')
-        <div class="col-lg-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div id="partner_transfer" style="height: 400px;">
-                    </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center">
+                <i class="i-Inbox-Out"></i>
+                <div class="content">
+                    <p class="text-muted mt-2 mb-0">Transit</p>
+                    <p id="transit" class="text-primary text-24 line-height-1 mb-2"></p>
                 </div>
             </div>
         </div>
-        @endif
-        @if (Auth::user()->role_id == '2')
-        <div class="col-lg-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div id="facility_transfer" style="height: 400px;">
-                    </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <input id="authenticated" type="hidden" value="{{ auth()->user()->role_id }}">
+    <div class="col-lg-12 col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div id="month_transfer" style="height: 400px;">
                 </div>
             </div>
         </div>
-        @endif
-        <!-- <div class="col-lg-4 col-sm-12">
+    </div>
+    @if (Auth::user()->role_id == '1')
+    <div class="col-lg-12 col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div id="partner_transfer" style="height: 400px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+    @if (Auth::user()->role_id == '2')
+    <div class="col-lg-12 col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div id="facility_transfer" style="height: 400px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+    <!-- <div class="col-lg-4 col-sm-12">
         <div class="card mb-4">
             <div class="card-body">
                 <div class="card-title">Sales by Countries</div>
@@ -157,8 +219,8 @@
             </div>
         </div>
     </div> -->
-    </div>
 </div>
+
 
 
 

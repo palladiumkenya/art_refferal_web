@@ -32,8 +32,12 @@
                             <td> {{ $loop->iteration }}</td>
                             <td> {{$referral->ccc_no}}</td>
                             <td> {{$referral->referral_type}}</td>
-                            <td> {{$referral->reffered_mfl_code}}</td>
-                            <td> {{$referral->initiator_mfl_code}}</td>
+                            @if ($referral->referral_type == 'Silent')
+                            <td></td>
+                            @else
+                            <td> {{$referral->facility . ' - ' . $referral->facility_mfl}}</td>
+                            @endif
+                            <td> {{$referral->initiator_facility . ' - ' . $referral->reffered_mfl_code}}</td>
                             <td> {{$referral->initiation_date}}</td>
 
                         </tr>
@@ -54,9 +58,50 @@
 @section('page-js')
 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
-<script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
-
+    $('#multicolumn_ordering_table').DataTable({
+        columnDefs: [{
+            targets: [0],
+            orderData: [0, 1]
+        }, {
+            targets: [1],
+            orderData: [1, 0]
+        }, {
+            targets: [4],
+            orderData: [4, 0]
+        }],
+        "paging": true,
+        "responsive": true,
+        "ordering": true,
+        "info": true,
+        dom: 'Bfrtip',
+        buttons: [{
+                extend: 'copy',
+                title: 'Referral List',
+                filename: 'Referral List'
+            },
+            {
+                extend: 'csv',
+                title: 'Referral List',
+                filename: 'Referral List'
+            },
+            {
+                extend: 'excel',
+                title: 'Referral List',
+                filename: 'Referral List'
+            },
+            {
+                extend: 'pdf',
+                title: 'Referral List',
+                filename: 'Referral List'
+            },
+            {
+                extend: 'print',
+                title: 'Referral List',
+                filename: 'Referral List'
+            }
+        ]
+    });
 </script>
 
 @endsection
