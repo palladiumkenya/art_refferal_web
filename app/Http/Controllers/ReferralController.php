@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Referral;
+use App\Models\ReferralData;
 use Auth;
 use Illuminate\Support\Facades\DB;
 
