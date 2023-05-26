@@ -19,12 +19,9 @@
                         <div class="col-md-6 p-4">
                             <p class="text-primary text--cap border-bottom-primary d-inline-block">MENU</p>
                             <div class="menu-icon-grid w-auto p-0">
-
                                 <a href="/home"><i class="i-Home1"></i> Home</a>
-                                <a href="{{route('patients.list')}}"><i class="i-Add-User"></i> Patients</a>
+                                <a href="{{route('patients.search')}}"><i class="i-Find-User"></i> Patient Search</a>
                                 <a href="{{route('providers.list')}}"><i class="i-Doctor"></i> Providers</a>
-                                <a href="{{route('patients.search')}}"><i class="i-Find-User"></i> Patient Details</a>
-
                             </div>
                         </div>
                     </div>
