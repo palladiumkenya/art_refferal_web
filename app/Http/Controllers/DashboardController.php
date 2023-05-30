@@ -104,20 +104,23 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('facility');
 
             $partner_transfers = ReferralData::select(
                 'partner',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )->groupBy('partner');
 
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('month');
 
@@ -125,7 +128,8 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('month');
 
@@ -153,7 +157,8 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('facility');
@@ -161,7 +166,8 @@ class DashboardController extends Controller
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('month');
@@ -170,7 +176,8 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('month');
@@ -195,7 +202,8 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('facility');
@@ -203,7 +211,8 @@ class DashboardController extends Controller
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('month');
@@ -212,16 +221,28 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('month');
+            $clients = ReferralData::whereIn('ccc_no', function ($query) {
+                $query->select('ccc_no')
+                    ->from('vw_referral')
+                    ->groupBy('ccc_no')
+                    ->havingRaw('COUNT(ccc_no) > 1');
+            })
+                ->select('*')
+                ->whereRaw('refferal_id = (SELECT MAX(refferal_id) FROM vw_referral AS t2 WHERE t2.ccc_no = vw_referral.ccc_no)');
+
+
 
             $data["transfers"] = $transfers->get();
             $data["patients"] = $patients->count();
             $data["facility_transfers"] = $facility_transfers->get();
             $data["month_transfers"] = $month_transfers->get();
             $data["average_days"] = $average_days->get();
+            $data["clients"] = $clients->get();
         }
 
 
@@ -259,20 +280,23 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $partner_transfers = ReferralData::select(
                 'partner',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )->groupBy('partner')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
@@ -280,7 +304,8 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
         }
@@ -302,7 +327,8 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -310,7 +336,8 @@ class DashboardController extends Controller
             $partner_transfers = ReferralData::select(
                 'partner',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('partner')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -318,7 +345,8 @@ class DashboardController extends Controller
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -327,7 +355,8 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -349,7 +378,8 @@ class DashboardController extends Controller
             $facility_transfers = ReferralData::select(
                 'facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -357,7 +387,8 @@ class DashboardController extends Controller
             $partner_transfers = ReferralData::select(
                 'partner',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('partner')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
@@ -365,7 +396,8 @@ class DashboardController extends Controller
             $month_transfers = ReferralData::select(
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
@@ -373,10 +405,20 @@ class DashboardController extends Controller
                 DB::raw('AVG(days) AS days'),
                 'month',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out')
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
                 ->groupBy('month')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
+            $clients = ReferralData::whereIn('ccc_no', function ($query) {
+                $query->select('ccc_no')
+                    ->from('vw_referral')
+                    ->groupBy('ccc_no')
+                    ->havingRaw('COUNT(ccc_no) > 1');
+            })
+                ->select('*')
+                ->whereRaw('refferal_id = (SELECT MAX(refferal_id) FROM vw_referral AS t2 WHERE t2.ccc_no = vw_referral.ccc_no)')
+                ->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
         }
         if (!empty($selected_partners)) {
             $transfers = $transfers->where('partner_id', $selected_partners);
@@ -409,6 +451,9 @@ class DashboardController extends Controller
         $data["partner_transfers"] = $partner_transfers->get();
         $data["month_transfers"] = $month_transfers->get();
         $data["average_days"] = $average_days->get();
+        if (Auth::user()->role_id == '3') {
+            $data["clients"] = $clients->get();
+        }
 
         return $data;
     }

@@ -170,7 +170,7 @@
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
-                <i class="i-Inbox-Out"></i>
+                <i class="i-Doctor"></i>
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transit</p>
                     <p id="transit" class="text-primary text-24 line-height-1 mb-2"></p>
@@ -211,14 +211,35 @@
         </div>
     </div>
     @endif
-    <!-- <div class="col-lg-4 col-sm-12">
-        <div class="card mb-4">
+    @if (Auth::user()->role_id == '3')
+    <div class="col-lg-12 col-md-12">
+        <div class="card">
             <div class="card-body">
-                <div class="card-title">Sales by Countries</div>
-                <div id="echartPie" style="height: 300px;"></div>
+                <h4 class="card-title mb-3"></h4>
+                <div class="table-responsive">
+                    <table id="table_client" class="display table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>CCC Number</th>
+                                <th>NUPI No</th>
+                                <th>Client Name</th>
+                                <th>VL Status</th>
+                                <th>Regimen</th>
+                                <th>Future Appointment</th>
+                                <th>Transfer Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
             </div>
         </div>
-    </div> -->
+    </div>
+    @endif
 </div>
 
 
@@ -246,6 +267,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+
 <script type="text/javascript">
     let authenticated = $('#authenticated').val();
     $("select").select2();
@@ -280,6 +308,7 @@
             },
             "startDate": "01/09/2022",
             "endDate": moment().format('MM/DD/YYYY'),
+            "maxDate": moment().format('MM/DD/YYYY'),
             "opens": "left"
         }, function(start, end, label) {});
     });
@@ -304,6 +333,36 @@
             }
             if (authenticated == '1') {
                 partnerTransfer(data.partner_transfers);
+            }
+            if (authenticated == '3') {
+                var list = data.clients;
+                $.each(list, function(index, item) {
+                    $('#table_client tbody').append('<tr><td>' + item.ccc_no + '</td><td>' + item.upi + '</td><td>' + item.firstname + '</td><td>' + item.viral_load + '</td><td>' + item.regimen + '</td><td>' + item.tca + '</td><td>' + item.referral_type + '</td></tr>');
+                });
+                $('#table_client').DataTable({
+                    columnDefs: [{
+                        targets: [0],
+                        orderData: [0, 1]
+                    }, {
+                        targets: [1],
+                        orderData: [1, 0]
+                    }, {
+                        targets: [4],
+                        orderData: [4, 0]
+                    }],
+                    "pageLength": 10,
+                    "paging": true,
+                    "responsive": true,
+                    "ordering": true,
+                    "info": true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copyHtml5',
+                        'excelHtml5',
+                        'csvHtml5',
+                        'pdfHtml5'
+                    ]
+                });
             }
             console.log(data.patients);
             console.log(data);
@@ -347,6 +406,40 @@
                 if (authenticated == '1') {
                     partnerTransfer(data.partner_transfers);
                 }
+                if (authenticated == '3') {
+                    var list = data.clients;
+                    var table = $('#table_client').DataTable();
+                    table.destroy();
+
+                    $('#table_client tbody').empty();
+                    $.each(list, function(index, item) {
+                        $('#table_client tbody').append('<tr><td>' + item.ccc_no + '</td><td>' + item.upi + '</td><td>' + item.firstname + '</td><td>' + item.viral_load + '</td><td>' + item.regimen + '</td><td>' + item.tca + '</td><td>' + item.referral_type + '</td></tr>');
+                    });
+                    $('#table_client').DataTable({
+                        columnDefs: [{
+                            targets: [0],
+                            orderData: [0, 1]
+                        }, {
+                            targets: [1],
+                            orderData: [1, 0]
+                        }, {
+                            targets: [4],
+                            orderData: [4, 0]
+                        }],
+                        "pageLength": 10,
+                        "paging": true,
+                        "responsive": true,
+                        "ordering": true,
+                        "info": true,
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'copyHtml5',
+                            'excelHtml5',
+                            'csvHtml5',
+                            'pdfHtml5'
+                        ]
+                    });
+                }
                 Swal.close();
             }
         });
@@ -361,10 +454,12 @@
         let month = [];
         let transfer_in = [];
         let transfer_out = [];
+        let transit = [];
         for (let i = 0; i < data.length; i++) {
             month.push(data[i].month);
             transfer_in.push(Number(data[i].transfer_in));
             transfer_out.push(Number(data[i].transfer_out));
+            transit.push(Number(data[i].transit));
         }
         console.log(data);
 
@@ -421,6 +516,12 @@
                 color: '#01058A',
                 data: transfer_in
 
+            },
+            {
+                name: 'Transit',
+                color: '#01DFD7',
+                data: transit
+
             }]
         });
     }
@@ -429,10 +530,12 @@
             let partner = [];
             let transfer_in = [];
             let transfer_out = [];
+            let transit = [];
             for (let i = 0; i < data.length; i++) {
                 partner.push(data[i].partner);
                 transfer_in.push(Number(data[i].transfer_in));
                 transfer_out.push(Number(data[i].transfer_out));
+                transit.push(Number(data[i].transit));
             }
             Highcharts.chart('partner_transfer', {
                 chart: {
@@ -487,6 +590,12 @@
                     color: '#01058A',
                     data: transfer_in
 
+                },
+                {
+                    name: 'Transit',
+                    color: '#01DFD7',
+                    data: transit
+
                 }]
             });
         }
@@ -496,10 +605,12 @@
             let facility = [];
             let transfer_in = [];
             let transfer_out = [];
+            let transit = [];
             for (let i = 0; i < data.length; i++) {
                 facility.push(data[i].facility);
                 transfer_in.push(Number(data[i].transfer_in));
                 transfer_out.push(Number(data[i].transfer_out));
+                transit.push(Number(data[i].transit));
             }
             Highcharts.chart('facility_transfer', {
                 chart: {
@@ -553,6 +664,12 @@
                     name: 'Transfer In',
                     color: '#01058A',
                     data: transfer_in
+
+                },
+                {
+                    name: 'Transit',
+                    color: '#01DFD7',
+                    data: transit
 
                 }]
             });
