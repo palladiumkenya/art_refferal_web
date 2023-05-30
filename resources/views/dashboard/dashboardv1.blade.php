@@ -200,6 +200,14 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-12 col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div id="county_transfer" style="height: 400px;">
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
     @if (Auth::user()->role_id == '2')
     <div class="col-lg-12 col-md-12">
@@ -333,6 +341,7 @@
             }
             if (authenticated == '1') {
                 partnerTransfer(data.partner_transfers);
+                countyTransfer(data.county_transfers);
             }
             if (authenticated == '3') {
                 var list = data.clients;
@@ -405,6 +414,7 @@
                 }
                 if (authenticated == '1') {
                     partnerTransfer(data.partner_transfers);
+                    countyTransfer(data.county_transfers);
                 }
                 if (authenticated == '3') {
                     var list = data.clients;
@@ -477,7 +487,7 @@
                 fontFamily: 'Inter'
             },
             title: {
-                text: 'Monthly Transfer Out/In',
+                text: 'Monthly Transfers',
                 style: {
                     fontFamily: 'Inter',
                     fontSize: '14px'
@@ -525,6 +535,7 @@
             }]
         });
     }
+    county_transfer
     if (authenticated == '1') {
         function partnerTransfer(data) {
             let partner = [];
@@ -551,7 +562,7 @@
                     fontFamily: 'Inter'
                 },
                 title: {
-                    text: 'Transfer Out/In By Partner',
+                    text: 'Transfers By Partner',
                     style: {
                         fontFamily: 'Inter',
                         fontSize: '14px'
@@ -560,6 +571,79 @@
 
                 xAxis: {
                     categories: partner,
+                    crosshair: true
+                },
+                yAxis: {
+                    title: {
+                        useHTML: true,
+                        text: 'No of Patient'
+                    }
+                },
+                tooltip: {
+
+                    formatter: function() {
+                        return '<b>' + this.x + '</b><br/>' +
+                            this.series.name + ': ' + this.y;
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Transfer Out',
+                    color: '#97080F',
+                    data: transfer_out
+                }, {
+                    name: 'Transfer In',
+                    color: '#01058A',
+                    data: transfer_in
+
+                },
+                {
+                    name: 'Transit',
+                    color: '#01DFD7',
+                    data: transit
+
+                }]
+            });
+        }
+        function countyTransfer(data) {
+            let county = [];
+            let transfer_in = [];
+            let transfer_out = [];
+            let transit = [];
+            for (let i = 0; i < data.length; i++) {
+                county.push(data[i].county);
+                transfer_in.push(Number(data[i].transfer_in));
+                transfer_out.push(Number(data[i].transfer_out));
+                transit.push(Number(data[i].transit));
+            }
+            Highcharts.chart('county_transfer', {
+                chart: {
+                    type: 'column'
+                },
+                legend: {
+                    itemStyle: {
+                        fontFamily: 'Inter',
+                        fontSize: '12px'
+                    }
+                },
+                style: {
+                    fontFamily: 'Inter'
+                },
+                title: {
+                    text: 'Transfers By County',
+                    style: {
+                        fontFamily: 'Inter',
+                        fontSize: '14px'
+                    }
+                },
+
+                xAxis: {
+                    categories: county,
                     crosshair: true
                 },
                 yAxis: {
@@ -626,7 +710,7 @@
                     fontFamily: 'Inter'
                 },
                 title: {
-                    text: 'Transfer Out/In By Facility',
+                    text: 'Transfers By Facility',
                     style: {
                         fontFamily: 'Inter',
                         fontSize: '14px'

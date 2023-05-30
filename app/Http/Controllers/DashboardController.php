@@ -101,13 +101,6 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             );
             $patients = Patient::select('ccc_no');
-            $facility_transfers = ReferralData::select(
-                'facility',
-                DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
-                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
-            )
-                ->groupBy('facility');
 
             $partner_transfers = ReferralData::select(
                 'partner',
@@ -115,6 +108,12 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )->groupBy('partner');
+            $county_transfers = ReferralData::select(
+                'county',
+                DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
+            )->groupBy('county');
 
             $month_transfers = ReferralData::select(
                 'month',
@@ -135,10 +134,10 @@ class DashboardController extends Controller
 
             $data["transfers"] = $transfers->get();
             $data["patients"] = $patients->count();
-            $data["facility_transfers"] = $facility_transfers->get();
             $data["partner_transfers"] = $partner_transfers->get();
             $data["month_transfers"] = $month_transfers->get();
             $data["average_days"] = $average_days->get();
+            $data["county_transfers"] = $county_transfers->get();
         }
         if (Auth::user()->role_id == '2') {
 
@@ -291,6 +290,12 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )->groupBy('partner')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
+            $county_transfers = ReferralData::select(
+                'county',
+                DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
+            )->groupBy('county')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $month_transfers = ReferralData::select(
                 'month',
@@ -427,6 +432,7 @@ class DashboardController extends Controller
             $facility_transfers = $facility_transfers->where('partner_id', $selected_partners);
             $partner_transfers = $partner_transfers->where('partner_id', $selected_partners);
             $month_transfers = $month_transfers->where('partner_id', $selected_partners);
+            $county_transfers = $county_transfers->where('partner_id', $selected_partners);
         }
         if (!empty($selected_facilites)) {
             $transfers = $transfers->where('facility_mfl', $selected_facilites);
@@ -434,6 +440,7 @@ class DashboardController extends Controller
             $facility_transfers = $facility_transfers->where('facility_mfl', $selected_facilites);
             $partner_transfers = $partner_transfers->where('facility_mfl', $selected_facilites);
             $month_transfers = $month_transfers->where('facility_mfl', $selected_facilites);
+            $county_transfers = $county_transfers->where('facility_mfl', $selected_facilites);
         }
         if (!empty($selected_counties)) {
             $transfers = $transfers->where('county_id', $selected_counties);
@@ -443,6 +450,7 @@ class DashboardController extends Controller
             $facility_transfers = $facility_transfers->where('county_id', $selected_counties);
             $partner_transfers = $partner_transfers->where('county_id', $selected_counties);
             $month_transfers = $month_transfers->where('county_id', $selected_counties);
+            $county_transfers = $county_transfers->where('county_id', $selected_counties);
         }
 
         $data["transfers"] = $transfers->get();
@@ -453,6 +461,9 @@ class DashboardController extends Controller
         $data["average_days"] = $average_days->get();
         if (Auth::user()->role_id == '3') {
             $data["clients"] = $clients->get();
+        }
+        if (Auth::user()->role_id == '1') {
+            $data["county_transfers"] = $county_transfers->get();
         }
 
         return $data;
