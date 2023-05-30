@@ -1,4 +1,4 @@
-name: deploy to test instance
+name: deploy to a test instance
 on:
   push:
     branches: [ master ]
@@ -16,22 +16,5 @@ jobs:
         key: ${{ secrets.CICD_SECRET }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /apps/github-workflows/mhealth-apps/
-          sudo rm -rf art_refferal_web
-          sudo mkdir art_refferal_web
-          sudo chown -R cicd2:cicd2 art_refferal_web
-          git config --global --add safe.directory /apps/github-workflows/mhealth-apps/art_refferal_web/      
-          cd art_refferal_web
-          git clone -b master https://github.com/palladiumkenya/art_refferal_web.git .
-          git status
-          cp /apps/dockerApps/art_refferal_web/.env /apps/github-workflows/mhealth-apps/art_refferal_web/
-          cp /apps/dockerApps/art_refferal_web/nginx.dockerfile /apps/github-workflows/mhealth-apps/art_refferal_web/
-          cp -r /apps/dockerApps/art_refferal_web/nginx /apps/github-workflows/mhealth-apps/art_refferal_web/
-          docker-compose down
-          docker-compose rm -f
-          docker-compose --env-file .env up -d --build site
-          # execute  commands
-          docker-compose exec -T php composer install --ignore-platform-reqs --no-dev
-          docker-compose exec -T php php artisan config:cache
-          docker-compose exec -T php php artisan view:cache
-          docker-compose exec -T php chmod -R 777 storage/
+         cd /home/lleon/art_refferal_web
+         sudo git pull 
