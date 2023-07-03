@@ -37,7 +37,7 @@ class PatientController extends Controller
         $patientData = $request->all();
         //Log::debug($patientData);
         //Process Registration Message
-        if($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A04')
+        if(($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A04') || ($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A08'))
         {
 
         
@@ -104,9 +104,9 @@ class PatientController extends Controller
             $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
         }
 
-        $data['viral_load'] = null;
-        $data['regimen'] = null;
-        $data['art_start_date']= null;
+         $data['viral_load'] = null;
+         $data['regimen'] = null;
+         $data['art_start_date']= null;
 
 
         foreach($patientData["APPOINTMENT_INFORMATION"] as $id)

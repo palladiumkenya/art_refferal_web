@@ -80,13 +80,27 @@ class Helper
                     'msidn' => $data['phone_no'],
                 ]);
 
-                PatientObservation::where('patient_id', $rec['patient_id'])
-                ->update([
-                    'mfl_code' => $data['mfl_code'],
-                    'viral_load' => $data['viral_load'],
-                    'regimen' => $data['regimen'],
-                    'tca' => date('Y-m-d', strtotime($data['tca'])),
-                ]);
+                if(is_null($data['regimen']))
+                {
+                     //Update Regimen if Exists and has been set
+                    PatientObservation::where('patient_id', $rec['patient_id'])
+                    ->update([
+                        'mfl_code' => $data['mfl_code'],
+                       //'viral_load' => $data['viral_load'],
+                        'tca' => date('Y-m-d', strtotime($data['tca'])),
+                    ]);
+                }else
+                {
+                    PatientObservation::where('patient_id', $rec['patient_id'])
+                    ->update([
+                        'mfl_code' => $data['mfl_code'],
+                        'viral_load' => $data['viral_load'],
+                        'regimen' => $data['regimen'],
+                         'tca' => date('Y-m-d', strtotime($data['tca'])),
+                    ]);
+
+                }
+              
 
                 PatientFacility::where('patient_id', $rec['patient_id'])
                 ->update([
