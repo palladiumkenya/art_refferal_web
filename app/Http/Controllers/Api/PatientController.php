@@ -32,6 +32,8 @@ class PatientController extends Controller
 
     public function register(Request $request)
     {
+        set_time_limit(120);
+
         $person = array();
         $data = array();
         $patientData = $request->all();
@@ -47,38 +49,45 @@ class PatientController extends Controller
             $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
             $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
             $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
-            $data['art_start_date'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
-            $data['date_enrolled_in_facility'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+            $data['art_start_date'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+            $data['date_enrolled_in_facility'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
             $data['tca'] = null;
             $data['visit_date'] = null;
-
-            foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
-            {
-                $data['tca'] = $appointment['APPOINTMENT_DATE'];
-                $data['visit_date'] = $appointment['VISIT_DATE'];
-            }
-
-            foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
-            {
-                $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
-            }
-
             $data['viral_load'] = null;
             $data['regimen'] = null;
 
-            foreach($patientData["OBSERVATION_RESULT"] as $obs)
-            {
-                switch($obs['OBSERVATION_IDENTIFIER'])
+            if(!empty($patientData["APPOINTMENT_INFORMATION"])){
+                foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
                 {
-                        case "ART_START":
-                            $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
-                        break;
-                        case "CURRENT_REGIMEN":
-                            $data['regimen'] = $obs['OBSERVATION_VALUE'];
-                        break;
+                    $data['tca'] = $appointment['APPOINTMENT_DATE'];
+                    $data['visit_date'] = $appointment['VISIT_DATE'];
                 }
             }
 
+            if(!empty($patientData["PATIENT_IDENTIFICATION"])){
+                foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
+                {
+                    $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
+                }
+            }
+
+            if(!empty($patientData["OBSERVATION_RESULT"])){
+                foreach($patientData["OBSERVATION_RESULT"] as $obs)
+                {
+                    switch($obs['OBSERVATION_IDENTIFIER'])
+                    {
+                            case "ART_START":
+                                $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
+                            break;
+                            case "CURRENT_REGIMEN":
+                                $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                            break;
+                    }
+                }
+            }
+
+            //dd($data);
+            //exit;
             $person[] = Helper::PatientStore($data);
 
             if(count($person)>0){
