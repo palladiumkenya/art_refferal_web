@@ -34,7 +34,7 @@ class Helper
                     'patient_clinic_no' => $data['CCC_NUMBER'],
                     'upi' => $data['upi'] == '' ? null : $data['upi'],
                     'date_of_birth' => date('Y-m-d', strtotime($data['date_of_birth'])),
-                    'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
+                    'art_start_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
                 ]);
 
@@ -52,7 +52,7 @@ class Helper
                 PatientFacility::create([
                     'patient_id' => $patient['patient_id'],
                     'mfl_code' => $data['mfl_code'],
-                    'from_date' => date('Y-m-d', strtotime($data['date_enrolled_in_facility'])),
+                    'from_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['date_enrolled_in_facility'])),
                 ]);
 
             }
