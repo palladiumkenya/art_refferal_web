@@ -39,9 +39,6 @@ class PatientController extends Controller
         //Process Registration Message
         if(($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A04') || ($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A08'))
         {
-
-        
-
             $data['upi'] = null;
             $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
             $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
@@ -52,7 +49,14 @@ class PatientController extends Controller
             $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
             $data['art_start_date'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
             $data['date_enrolled_in_facility'] = $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
-            $data['tca'] = $patientData["PATIENT_VISIT"]["VISIT_DATE"];
+            $data['tca'] = null;
+            $data['visit_date'] = null;
+
+            foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
+            {
+                $data['tca'] = $appointment['APPOINTMENT_DATE'];
+                $data['visit_date'] = $appointment['VISIT_DATE'];
+            }
 
             foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
             {
@@ -64,15 +68,15 @@ class PatientController extends Controller
 
             foreach($patientData["OBSERVATION_RESULT"] as $obs)
             {
-            switch($obs['OBSERVATION_IDENTIFIER'])
-            {
-                    case "ART_START":
-                        $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
-                    break;
-                    case "CURRENT_REGIMEN":
-                        $data['regimen'] = $obs['OBSERVATION_VALUE'];
-                    break;
-            }
+                switch($obs['OBSERVATION_IDENTIFIER'])
+                {
+                        case "ART_START":
+                            $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "CURRENT_REGIMEN":
+                            $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                }
             }
 
             $person[] = Helper::PatientStore($data);
@@ -97,24 +101,25 @@ class PatientController extends Controller
         $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
         $data['art_start_date'] = NULL;
         $data['date_enrolled_in_facility'] = NULL;
-        $data['tca']=array();
+        $data['tca']=NULL;
+        $data['visit_date'] = null;
+        $data['viral_load'] = null;
+        $data['regimen'] = null;
+        $data['art_start_date']= null;
 
         foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
         {
             $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
         }
 
-         $data['viral_load'] = null;
-         $data['regimen'] = null;
-         $data['art_start_date']= null;
 
-
-        foreach($patientData["APPOINTMENT_INFORMATION"] as $id)
+        foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
         {
-            $data['tca'] = $id['APPOINTMENT_DATE'];
+            $data['tca'] = $appointment['APPOINTMENT_DATE'];
+            $data['visit_date'] = $appointment['VISIT_DATE'];
         }
 
-       
+
 
         $person[] = Helper::PatientStore($data);
 

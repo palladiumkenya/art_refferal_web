@@ -16,5 +16,6 @@ class PatientObservation extends Model
         'viral_load',
         'regimen',
         'tca',
+        'visit_date',
     ];
 }

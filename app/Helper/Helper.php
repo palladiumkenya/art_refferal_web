@@ -45,6 +45,7 @@ class Helper
                     'viral_load' => $data['viral_load'],
                     'regimen' => $data['regimen'],
                     'tca' => date('Y-m-d', strtotime($data['tca'])),
+                    'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                 ]);
 
                 //create patient facility
@@ -88,6 +89,7 @@ class Helper
                         'mfl_code' => $data['mfl_code'],
                        //'viral_load' => $data['viral_load'],
                         'tca' => date('Y-m-d', strtotime($data['tca'])),
+                        'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                     ]);
                 }else
                 {
@@ -97,10 +99,11 @@ class Helper
                         'viral_load' => $data['viral_load'],
                         'regimen' => $data['regimen'],
                          'tca' => date('Y-m-d', strtotime($data['tca'])),
+                         'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                     ]);
 
                 }
-              
+
 
                 PatientFacility::where('patient_id', $rec['patient_id'])
                 ->update([
@@ -137,8 +140,6 @@ class Helper
                     'msidn' => $data['phone_no'],
                 ]);
 
-
-
                 //Update TCA
                 PatientObservation::where('patient_id', $rec['patient_id'])
                 ->update([
@@ -146,10 +147,8 @@ class Helper
                     'viral_load' => $data['viral_load'],
                     'regimen' => $data['regimen'],
                     'tca' => date('Y-m-d', strtotime($data['tca'])),
+                    'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                 ]);
-
-
-
 
 
             }
