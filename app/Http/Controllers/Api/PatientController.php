@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helper\Helper;
 use App\Models\Referral;
+use Illuminate\Support\Facades\DB;
 //use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
@@ -216,7 +217,7 @@ class PatientController extends Controller
                     join('tbl_patient', 'tbl_refferal.ccc_no', '=', 'tbl_patient.ccc_no')
                     ->join('tbl_person', 'tbl_patient.person_id', '=', 'tbl_person.person_id')
                     ->join('tbl_master_facility', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_master_facility.code')
-                    ->select('tbl_refferal.initiator_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
+                    ->select('tbl_refferal.initiator_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.initiation_date','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
                     ->where('tbl_refferal.reffered_mfl_code', $mfl_code)
                     ->orderBy('tbl_refferal.initiation_date', 'asc')
                     ->orderBy('tbl_master_facility.name', 'asc')
@@ -229,14 +230,14 @@ class PatientController extends Controller
     //get transfer out status
     public function referral_status(Request $request)
     {
-        $mflcode = $request->route('mflcode');
+        $mfl_code = $request->route('mflcode');
         $patients = explode(',',(base64_decode($request->route('patients'))));
 
         $referral = Referral::
                     join('tbl_patient', 'tbl_refferal.ccc_no', '=', 'tbl_patient.ccc_no')
                     ->join('tbl_person', 'tbl_patient.person_id', '=', 'tbl_person.person_id')
                     ->join('tbl_master_facility', 'tbl_refferal.reffered_mfl_code', '=', 'tbl_master_facility.code')
-                    ->select('tbl_refferal.reffered_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
+                    ->select('tbl_refferal.reffered_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.initiation_date','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
                     ->where('tbl_refferal.initiator_mfl_code', $mfl_code)
                     ->wherein('tbl_refferal.ccc_no', $patients)
                     ->orderBy('tbl_refferal.initiation_date', 'asc')

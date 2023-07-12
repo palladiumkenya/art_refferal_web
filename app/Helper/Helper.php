@@ -246,7 +246,7 @@ class Helper
             //create transfer record
            $referral = Referral::create([
                 'ccc_no' => $data['CCC_NUMBER'],
-                'referral_type' => $data['Normal'],
+                'referral_type' => 'Normal',
                 'initiation_date' => $data['initiation_date'] == '' ? null : date('Y-m-d', strtotime($data['initiation_date'])),
                 'initiator_mfl_code' => $data['transfer_out_facility'],
                 'reffered_mfl_code' => $data['transfer_in_facility'],
@@ -264,15 +264,22 @@ class Helper
 
         }else{
             //update transfer record
-            $rec = Referral::firstWhere('ccc_no', $data['CCC_NUMBER'])
+            $refferal_id = 0;
+
+            $rec = Referral::where('ccc_no', $data['CCC_NUMBER'])
                             ->where('initiator_mfl_code', $data['transfer_out_facility'])
                             ->where('reffered_mfl_code', $data['transfer_in_facility'])
-                            ->where('transfer_status', 'ACTIVE');
+                            ->where('transfer_status', 'ACTIVE')
+                            ->get();
 
-            $referral = Person::where('refferal_id', $rec['refferal_id'])
+            foreach($rec as $row){
+                $refferal_id = $row['refferal_id'];
+            }
+
+            $referral = Referral::where('refferal_id', $refferal_id)
             ->update([
                 'ccc_no' => $data['CCC_NUMBER'],
-                'referral_type' => $data['Normal'],
+                'referral_type' => 'Normal',
                 'initiation_date' => $data['initiation_date'] == '' ? null : date('Y-m-d', strtotime($data['initiation_date'])),
                 'initiator_mfl_code' => $data['transfer_out_facility'],
                 'reffered_mfl_code' => $data['transfer_in_facility'],
