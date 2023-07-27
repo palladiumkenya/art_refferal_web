@@ -6,6 +6,7 @@ use App\Models\Person;
 use App\Models\Patient;
 use App\Models\PatientFacility;
 use App\Models\PatientObservation;
+use App\Models\PatientDiscontinuation;
 use App\Models\Referral;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +34,7 @@ class Helper
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
                     'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
                     'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
@@ -76,7 +77,7 @@ class Helper
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
                     'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
                     'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
@@ -136,7 +137,7 @@ class Helper
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
                     'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
                     'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
                     //'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
@@ -163,10 +164,11 @@ class Helper
 
     }
 
-    public function TransferStore($data)
+    public function DiscontinuationStore($data)
     {
         $person = array();
         $patient = array();
+        $patient_id = 0;
 
         //check if the patient exists
         if (DB::table('tbl_patient')
@@ -186,13 +188,14 @@ class Helper
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
                     'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
                     'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
                 ]);
 
                 //create patient facility
+                $patient_id = $patient['patient_id'];
                 PatientFacility::create([
                     'patient_id' => $patient['patient_id'],
                     'mfl_code' => $data['mfl_code'],
@@ -214,15 +217,17 @@ class Helper
                     'lastname' => $data['lastname'],
                 ]);
 
+                $patient_id = $rec['patient_id'];
                 $patient = Patient::where('patient_id', $rec['patient_id'])
                 ->update([
                     'gender' => $data['gender'],
                     'ccc_no' => $data['CCC_NUMBER'],
                     'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => $data['upi'] == '' ? null : $data['upi'],
+                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
                     'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
                     'art_start_date' => $data['art_start_date'] == '' ? null : date('Y-m-d', strtotime($data['art_start_date'])),
                     'msidn' => $data['phone_no'],
+                    'is_active' => 0,
                 ]);
 
                 if( !(is_null($data['date_enrolled_in_facility'])) )
@@ -235,69 +240,55 @@ class Helper
                 }
             }
 
-        //check if patient has an active/open transfer record
-        if (DB::table('tbl_refferal')
-        ->where('ccc_no', $data['CCC_NUMBER'])
-        ->where('initiator_mfl_code', $data['transfer_out_facility'])
-        ->where('reffered_mfl_code', $data['transfer_in_facility'])
-        ->where('transfer_status', 'ACTIVE')
-        ->doesntExist())
+        //capture the discontinuation
+        $discontinuation = PatientDiscontinuation::create([
+            'patient_id' => $patient_id,
+            'discontinuation_reason' => $data['discontinuation_reason'],
+            'effective_discontinuation_date' => $data['effective_discontinuation_date'] == '' ? null : date('Y-m-d', strtotime($data['effective_discontinuation_date'])),
+            'death_date' => $data['death_date'] == '' ? null : date('Y-m-d', strtotime($data['death_date'])),
+            'death_indicator' => $data['death_indicator'],
+        ]);
+
+        if(!empty($data["service_request"]))
         {
+            //capture the transfer out
+            $service_request = $data["service_request"];
+
             //create transfer record
-           $referral = Referral::create([
+            $referral = Referral::create([
                 'ccc_no' => $data['CCC_NUMBER'],
                 'referral_type' => 'Normal',
-                'initiation_date' => $data['initiation_date'] == '' ? null : date('Y-m-d', strtotime($data['initiation_date'])),
-                'initiator_mfl_code' => $data['transfer_out_facility'],
-                'reffered_mfl_code' => $data['transfer_in_facility'],
-                'appointment_date' => $data['tca'] == '' ? null : date('Y-m-d', strtotime($data['tca'])),
-                'viral_load' => $data['viral_load'],
-                'last_vl_date' => $data['last_vl_date'] == '' ? null : date('Y-m-d', strtotime($data['last_vl_date'])),
-                'current_regimen' => $data['regimen'],
-                'acceptance_date' => $data['acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['acceptance_date'])),
+                'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
+                'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
+                'reffered_mfl_code' => $service_request['RECEIVING_FACILITY_MFLCODE'],
+                'transfer_status' => $service_request['TRANSFER_STATUS'],
+                'transfer_intent' => $service_request['TRANSFER_INTENT'],
+                'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
+                'supporting_info' => json_encode($service_request['SUPPORTING_INFO']),
                 'created_date' => date('Y-m-d'),
                 'updated_date' => date('Y-m-d'),
-                'transfer_status' => $data['transfer_status'],
-                'transfer_intent' => $data['transfer_intent'],
-                'transfer_priority' => $data['transfer_priority'],
             ]);
 
-        }else{
-            //update transfer record
-            $refferal_id = 0;
-
-            $rec = Referral::where('ccc_no', $data['CCC_NUMBER'])
-                            ->where('initiator_mfl_code', $data['transfer_out_facility'])
-                            ->where('reffered_mfl_code', $data['transfer_in_facility'])
-                            ->where('transfer_status', 'ACTIVE')
-                            ->get();
-
-            foreach($rec as $row){
-                $refferal_id = $row['refferal_id'];
-            }
-
-            $referral = Referral::where('refferal_id', $refferal_id)
-            ->update([
-                'ccc_no' => $data['CCC_NUMBER'],
-                'referral_type' => 'Normal',
-                'initiation_date' => $data['initiation_date'] == '' ? null : date('Y-m-d', strtotime($data['initiation_date'])),
-                'initiator_mfl_code' => $data['transfer_out_facility'],
-                'reffered_mfl_code' => $data['transfer_in_facility'],
-                'appointment_date' => $data['tca'] == '' ? null : date('Y-m-d', strtotime($data['tca'])),
-                'viral_load' => $data['viral_load'],
-                'last_vl_date' => $data['last_vl_date'] == '' ? null : date('Y-m-d', strtotime($data['last_vl_date'])),
-                'current_regimen' => $data['regimen'],
-                'acceptance_date' => $data['acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['acceptance_date'])),
-                'created_date' => date('Y-m-d'),
-                'updated_date' => date('Y-m-d'),
-                'transfer_status' => $data['transfer_status'],
-                'transfer_intent' => $data['transfer_intent'],
-                'transfer_priority' => $data['transfer_priority'],
-            ]);
         }
 
+        return  $discontinuation;
+    }
 
-        return  $referral;
+    public function TransferInStore($data)
+    {
+        $transfer_in = array();
+
+        //capture the transfer in event
+        $transfer_in = Referral::where('ccc_no', $data['CCC_NUMBER'])
+        ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
+        ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+        ->where('transfer_status', 'ACTIVE')
+        ->update([
+                'transfer_status' => $data['transfer_status'],
+                'acceptance_date' => $data['to_acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+            ]);
+
+        return  $transfer_in;
     }
 
 

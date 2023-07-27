@@ -39,148 +39,94 @@ class PatientController extends Controller
         $person = array();
         $data = array();
         $patientData = $request->all();
+        // dd($patientData);
         //Log::debug($patientData);
         //Process Registration Message
-        if(($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A04') || ($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='ADT^A08'))
-        {
-            $data['upi'] = null;
-            $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-            $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
-            $data['middlename'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["MIDDLE_NAME"];
-            $data['lastname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["LAST_NAME"];
-            $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
-            $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
-            $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
-            $data['art_start_date'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
-            $data['date_enrolled_in_facility'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
-            $data['tca'] = null;
-            $data['visit_date'] = null;
-            $data['viral_load'] = null;
-            $data['regimen'] = null;
 
-            if(!empty($patientData["APPOINTMENT_INFORMATION"])){
-                foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
-                {
-                    $data['tca'] = $appointment['APPOINTMENT_DATE'];
-                    $data['visit_date'] = $appointment['VISIT_DATE'];
-                }
-            }
+        $data['upi'] = null;
+        $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
+        $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
+        $data['middlename'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["MIDDLE_NAME"];
+        $data['lastname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["LAST_NAME"];
+        $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
+        $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
+        $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
+        $data['art_start_date'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+        $data['date_enrolled_in_facility'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
+        $data['tca'] = null;
+        $data['visit_date'] = null;
+        $data['viral_load'] = null;
+        $data['regimen'] = null;
+        $data['initiation_date']= null;
+        $data['acceptance_date']= null;
+        $data['last_vl_date']= null;
+        $data['drug_days']= null;
 
-            if(!empty($patientData["PATIENT_IDENTIFICATION"])){
-                foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
-                {
-                    $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
-                }
-            }
+        $message_type = $patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"];
 
-            if(!empty($patientData["OBSERVATION_RESULT"])){
-                foreach($patientData["OBSERVATION_RESULT"] as $obs)
-                {
-                    switch($obs['OBSERVATION_IDENTIFIER'])
-                    {
-                            case "ART_START":
-                                $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
-                            break;
-                            case "CURRENT_REGIMEN":
-                                $data['regimen'] = $obs['OBSERVATION_VALUE'];
-                            break;
-                    }
-                }
-            }
-
-            //dd($data);
-            //exit;
-            $person[] = Helper::PatientStore($data);
-
-            if(count($person)>0){
-                return response()->json(['status' =>"success",'message'=>$patientData]);
-            }else{
-                return response()->json(['status' =>"fail",'message'=>'Failure while inserting patient record']);
-            }
-
-        }
-        else if($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='SIU^S12') //Process Appointment Message
-        {
-            $data['upi'] = null;
-            $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-            $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
-            $data['middlename'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["MIDDLE_NAME"];
-            $data['lastname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["LAST_NAME"];
-            $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
-            $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
-            $data['gender'] = $patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : 'Female';
-            $data['art_start_date'] = NULL;
-            $data['date_enrolled_in_facility'] = NULL;
-            $data['tca']=NULL;
-            $data['visit_date'] = null;
-            $data['viral_load'] = null;
-            $data['regimen'] = null;
-            $data['art_start_date']= null;
-
-            foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
-            {
-                $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
-            }
-
-
+        if(!empty($patientData["APPOINTMENT_INFORMATION"])){
             foreach($patientData["APPOINTMENT_INFORMATION"] as $appointment)
             {
                 $data['tca'] = $appointment['APPOINTMENT_DATE'];
                 $data['visit_date'] = $appointment['VISIT_DATE'];
             }
-
-
-
-            $person[] = Helper::PatientStore($data);
-
-            if(count($person)>0){
-                return response()->json(['status' =>"success",'message'=>$patientData]);
-            }else{
-                return response()->json(['status' =>"fail",'message'=>'Failure while inserting patient record']);
-            }
-
-
-
         }
-        else if($patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"]=='SIU^S20') //Process transfer in/out Message
-        {
-            $data['upi'] = null;
-            $data['mfl_code'] = $patientData["MESSAGE_HEADER"]["SENDING_FACILITY"];
-            $data['firstname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["FIRST_NAME"];
-            $data['middlename'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["MIDDLE_NAME"];
-            $data['lastname'] = $patientData["PATIENT_IDENTIFICATION"]["PATIENT_NAME"]["LAST_NAME"];
-            $data['date_of_birth'] = date("Y-m-d",strtotime($patientData["PATIENT_IDENTIFICATION"]["DATE_OF_BIRTH"]));
-            $data['phone_no'] = $patientData["PATIENT_IDENTIFICATION"]["PHONE_NUMBER"];
-            $data['gender'] = ($patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'M' ? 'Male' : ($patientData["PATIENT_IDENTIFICATION"]["SEX"] == 'F' ? 'Female' : null));
-            $data['art_start_date'] = NULL;
-            $data['date_enrolled_in_facility'] = NULL;
-            $data['tca']=NULL;
-            $data['visit_date'] = null;
-            $data['viral_load'] = null;
-            $data['regimen'] = null;
-            $data['art_start_date']= null;
-            $data['initiation_date']= null;
-            $data['acceptance_date']= null;
-            $data['last_vl_date']= null;
-            $data['drug_days']= null;
-            $data['transfer_status']= $patientData["SERVICEREQUEST"]["STATUS"];
-            $data['transfer_intent']= $patientData["SERVICEREQUEST"]["INTENT"];
-            $data['transfer_priority']= $patientData["SERVICEREQUEST"]["PRIORITY"];
-            $data['transfer_out_facility']= $patientData["SERVICEREQUEST"]["TOFACILITYMFLCODE"];
-            $data['transfer_in_facility']= $patientData["SERVICEREQUEST"]["TIFACILITYMFLCODE"];
 
+        if(!empty($patientData["PATIENT_IDENTIFICATION"])){
             foreach($patientData["PATIENT_IDENTIFICATION"]["INTERNAL_PATIENT_ID"] as $id)
             {
                 $data[$id['IDENTIFIER_TYPE']] = $id['ID'];
             }
+        }
 
-            $person[] = Helper::TransferStore($data);
-
-            if(count($person)>0){
-                return response()->json(['status' =>"success",'message'=>$patientData]);
-            }else{
-                return response()->json(['status' =>"fail",'message'=>'Failure while inserting transfer record']);
+        if(!empty($patientData["OBSERVATION_RESULT"])){
+            foreach($patientData["OBSERVATION_RESULT"] as $obs)
+            {
+                switch($obs['OBSERVATION_IDENTIFIER'])
+                {
+                        case "ART_START":
+                            $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "CURRENT_REGIMEN":
+                            $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                }
             }
+        }
+
+        if(($message_type == 'ADT^A04') || ($message_type == 'ADT^A08' ) || ($message_type == 'SIU^S12' ))
+        {
+            $person[] = Helper::PatientStore($data);
+
+        }
+        else if($message_type == 'SIU^S20') //Process patient discontinuation
+        {
+            $discontinuation_message = $patientData["DISCONTINUATION_MESSAGE"];
+
+            $data['discontinuation_reason']= $discontinuation_message["DISCONTINUATION_REASON"];
+            $data['effective_discontinuation_date']= $discontinuation_message["EFFECTIVE_DISCONTINUATION_DATE"];
+            $data['death_date']= $patientData["PATIENT_IDENTIFICATION"]["DEATH_DATE"];
+            $data['death_indicator']= $patientData["PATIENT_IDENTIFICATION"]["DEATH_INDICATOR"];
+            $data['service_request'] = $discontinuation_message["SERVICE_REQUEST"];
+
+            $person[] = Helper::DiscontinuationStore($data);
+        }
+        else if($message_type == 'SIU^S21') //Process patient discontinuation
+        {
+            $enrollment_message = $patientData["PROGRAM_ENROLLMENT_MESSAGE"]["SERVICE_REQUEST"];
+
+            $data['sending_facility_mflcode'] = $enrollment_message["SENDING_FACILITY_MFLCODE"];
+            $data['receiving_facility_mflcode'] = $enrollment_message["RECEIVING_FACILITY_MFLCODE"];
+            $data['transfer_status'] = $enrollment_message["TRANSFER_STATUS"];
+            $data['to_acceptance_date'] = $enrollment_message["TO_ACCEPTANCE_DATE"];
+
+            $person[] = Helper::TransferInStore($data);
+        }
+
+        if(count($person)>0){
+            return response()->json(['status' =>"success",'message'=>$patientData]);
+        }else{
+            return response()->json(['status' =>"fail",'message'=>'Failure while inserting patient record']);
         }
     }
 

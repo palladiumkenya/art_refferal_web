@@ -13,9 +13,15 @@ class PatientObservation extends Model
     protected $fillable = [
         'patient_id',
         'mfl_code',
-        'viral_load',
-        'regimen',
-        'tca',
         'visit_date',
+        'viral_load',
+        'viral_load_date',
+        'regimen',
+        'blood_pressure',
+        'height',
+        'weight',
+        'muac',
+        'who_stage',
+        'tca',
     ];
 }

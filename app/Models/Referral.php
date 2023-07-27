@@ -32,5 +32,6 @@ class Referral extends Model
         'transfer_status',
         'transfer_intent',
         'transfer_priority',
+        'supporting_info',
     ];
 }
