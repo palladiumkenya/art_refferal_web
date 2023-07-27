@@ -280,7 +280,7 @@ class Helper
 
         //capture the transfer in event
         $transfer_in = Referral::where('ccc_no', $data['CCC_NUMBER'])
-        ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
+        // ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
         ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
         ->where('transfer_status', 'ACTIVE')
         ->update([
