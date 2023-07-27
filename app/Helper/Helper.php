@@ -285,7 +285,8 @@ class Helper
         ->where('transfer_status', 'ACTIVE')
         ->update([
                 'transfer_status' => $data['transfer_status'],
-                'acceptance_date' => $data['to_acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                'acceptance_date' => date('Y-m-d'),
+                // 'acceptance_date' => $data['to_acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['to_acceptance_date'])),
             ]);
 
         return  $transfer_in;
