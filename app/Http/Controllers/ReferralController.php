@@ -12,6 +12,8 @@ class ReferralController extends Controller
 {
     public function referral()
     {
+        $referral_details = array();
+
         if (Auth::user()->role_id == '1') {
             $referral_details = ReferralData::select('*')->get();
         }
@@ -27,7 +29,7 @@ class ReferralController extends Controller
         }
         if (Auth::user()->role_id == '3') {
             $referral_details = ReferralData::select('*')
-                ->where('facility_mfl', Auth::user()->mfl_code)
+                ->where('initiator_mfl_code', Auth::user()->mfl_code)
                 ->get();
         }
         if (Auth::user()->role_id == '4') {
