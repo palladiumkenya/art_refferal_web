@@ -36,13 +36,19 @@
                             <td> {{$referral->ccc_no}}</td>
                             <td> {{$referral->referral_type}}</td>z
                             <td> {{$referral->initiator_facility . ' - ' . $referral->initiator_mfl_code}}</td>
-                            @if ($referral->referral_type == 'Silent')
-                            <td></td>
-                            @else
-                            <td> {{$referral->referred_facility . ' - ' . $referral->reffered_mfl_code}}</td>
-                            @endif
-                            <td> {{$referral->initiation_date}}</td>
-                            <td> {{$referral->acceptance_date}}</td>
+                            <td>
+                                @if ($referral->referral_type != 'Silent')
+                                    {{$referral->referred_facility . ' - ' . $referral->reffered_mfl_code}}
+                                @endif
+                            </td>
+                            <td> {{date('d-M-Y',strtotime($referral->initiation_date))}}</td>
+                            <td>
+                                @if ($referral->acceptance_date == '')
+                                    {{$referral->acceptance_date}}
+                                @else
+                                    {{date('d-M-Y',strtotime($referral->acceptance_date))}}
+                                @endif
+                            </td>
                             <td> {{$referral->days}}</td>
                             <td> {{$referral->transfer_status}}</td>
 
