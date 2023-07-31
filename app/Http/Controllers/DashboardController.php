@@ -436,7 +436,7 @@ class DashboardController extends Controller
         }
         if (!empty($selected_facilites)) {
             $transfers = $transfers->where('facility_mfl', $selected_facilites);
-            $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')->where('tbl_patient_observations.facility_mfl', $selected_facilites);
+            $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')->where('tbl_patient_observations.mfl_code', $selected_facilites);
             $facility_transfers = $facility_transfers->where('facility_mfl', $selected_facilites);
             $partner_transfers = $partner_transfers->where('facility_mfl', $selected_facilites);
             $month_transfers = $month_transfers->where('facility_mfl', $selected_facilites);

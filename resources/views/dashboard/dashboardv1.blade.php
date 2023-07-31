@@ -535,7 +535,7 @@
             }]
         });
     }
-    county_transfer
+   
     if (authenticated == '1') {
         function partnerTransfer(data) {
             let partner = [];
