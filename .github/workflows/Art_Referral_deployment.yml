@@ -16,5 +16,5 @@ jobs:
         key: ${{ secrets.CICD_SECRET }}
         port: ${{ secrets.PORT }}
         script: |
-         cd /home/lleon/art_refferal_web
+         cd ${{ secrets.PATH }}
          sudo git pull 

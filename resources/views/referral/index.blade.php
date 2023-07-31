@@ -18,11 +18,14 @@
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Patient CCC No</th>
-                            <th>Referral Type</th>
-                            <th>Referred From</th>
-                            <th>Referred To</th>
+                            <th>CCC No</th>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
                             <th>Date Referred</th>
+                            <th>Date Completed</th>
+                            <th>No. of Days</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,14 +34,23 @@
                         <tr>
                             <td> {{ $loop->iteration }}</td>
                             <td> {{$referral->ccc_no}}</td>
-                            <td> {{$referral->referral_type}}</td>
-                            @if ($referral->referral_type == 'Silent')
-                            <td></td>
-                            @else
-                            <td> {{$referral->facility . ' - ' . $referral->facility_mfl}}</td>
-                            @endif
-                            <td> {{$referral->initiator_facility . ' - ' . $referral->reffered_mfl_code}}</td>
-                            <td> {{$referral->initiation_date}}</td>
+                            <td> {{$referral->referral_type}}</td>z
+                            <td> {{$referral->initiator_facility . ' - ' . $referral->initiator_mfl_code}}</td>
+                            <td>
+                                @if ($referral->referral_type != 'Silent')
+                                    {{$referral->referred_facility . ' - ' . $referral->reffered_mfl_code}}
+                                @endif
+                            </td>
+                            <td> {{date('d-M-Y',strtotime($referral->initiation_date))}}</td>
+                            <td>
+                                @if ($referral->acceptance_date == '')
+                                    {{$referral->acceptance_date}}
+                                @else
+                                    {{date('d-M-Y',strtotime($referral->acceptance_date))}}
+                                @endif
+                            </td>
+                            <td> {{$referral->days}}</td>
+                            <td> {{$referral->transfer_status}}</td>
 
                         </tr>
                         @endforeach
