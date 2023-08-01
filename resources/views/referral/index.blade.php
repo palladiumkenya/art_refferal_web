@@ -34,7 +34,7 @@
                         <tr>
                             <td> {{ $loop->iteration }}</td>
                             <td> {{$referral->ccc_no}}</td>
-                            <td> {{$referral->referral_type}}</td>z
+                            <td> {{$referral->referral_type}}</td>
                             <td> {{$referral->initiator_facility . ' - ' . $referral->initiator_mfl_code}}</td>
                             <td>
                                 @if ($referral->referral_type != 'Silent')
