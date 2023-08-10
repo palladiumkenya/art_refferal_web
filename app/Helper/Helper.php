@@ -2,16 +2,22 @@
 
 namespace App\Helper;
 
+use App\Models\Facility;
+use App\Models\FacilityLocation;
+use App\Models\FacilityLocationDetail;
 use App\Models\Person;
 use App\Models\Patient;
 use App\Models\PatientFacility;
 use App\Models\PatientObservation;
 use App\Models\PatientDiscontinuation;
 use App\Models\Referral;
+use App\Models\Message;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class Helper
 {
+
     public function PatientStore($data)
     {
         $person = array();
@@ -164,7 +170,7 @@ class Helper
 
     }
 
-    public function DiscontinuationStore($data)
+    public function DiscontinuationStore($data,$patientData)
     {
         $person = array();
         $patient = array();
@@ -241,10 +247,11 @@ class Helper
             }
 
         //capture the discontinuation
+        $effective_discontinuation_date = $data['effective_discontinuation_date'] == '' ? null : date('Y-m-d', strtotime($data['effective_discontinuation_date']));
         $discontinuation = PatientDiscontinuation::create([
             'patient_id' => $patient_id,
             'discontinuation_reason' => $data['discontinuation_reason'],
-            'effective_discontinuation_date' => $data['effective_discontinuation_date'] == '' ? null : date('Y-m-d', strtotime($data['effective_discontinuation_date'])),
+            'effective_discontinuation_date' => $effective_discontinuation_date,
             'death_date' => $data['death_date'] == '' ? null : date('Y-m-d', strtotime($data['death_date'])),
             'death_indicator' => $data['death_indicator'],
         ]);
@@ -264,10 +271,35 @@ class Helper
                 'transfer_status' => $service_request['TRANSFER_STATUS'],
                 'transfer_intent' => $service_request['TRANSFER_INTENT'],
                 'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
-                'supporting_info' => json_encode($service_request['SUPPORTING_INFO']),
+                'supporting_info' => json_encode($patientData),
                 'created_date' => date('Y-m-d'),
                 'updated_date' => date('Y-m-d'),
             ]);
+
+            //get the facilities contact information
+            $sending_facility = static::get_facility_contact_info($service_request['SENDING_FACILITY_MFLCODE']);
+            $receiving_facility = static::get_facility_contact_info($service_request['RECEIVING_FACILITY_MFLCODE']);
+
+            // get the message content to be sent
+            if(!empty($sending_facility[0]['telephone']) && !empty($receiving_facility[0]['telephone']))
+            {
+                $message = Message::firstWhere('message_type', 'transfer_out');
+                $msg = $message['message_content'];
+
+                $message_params = array(
+                                            "www" => $data['CCC_NUMBER'],
+                                            "xxx" => $sending_facility[0]['name'],
+                                            "yyy" => $sending_facility[0]['telephone'],
+                                            "zzz" => $effective_discontinuation_date,
+
+                                        );
+
+                $msg = static::message_formulate($msg,$message_params);
+                $source  = '40149'; //env('SMS_SERVICE_KEY', '');
+
+                //send the sms notifications
+                static::send_sms($source, $receiving_facility[0]['telephone'], $msg);
+            }
 
         }
 
@@ -278,18 +310,110 @@ class Helper
     {
         $transfer_in = array();
 
-        //capture the transfer in event
-        $transfer_in = Referral::where('ccc_no', $data['CCC_NUMBER'])
-        // ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
-        // ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+        if (DB::table('tbl_refferal')
+        ->where('ccc_no', $data['CCC_NUMBER'])
+        ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
+        ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
         ->where('transfer_status', 'ACTIVE')
-        ->update([
+        ->exists())
+        {
+            //capture the transfer in event
+            $transfer_in = Referral::where('ccc_no', $data['CCC_NUMBER'])
+            ->where('initiator_mfl_code', $data['sending_facility_mflcode'])
+            ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+            ->where('transfer_status', 'ACTIVE')
+            ->update([
+                    'transfer_status' => $data['transfer_status'],
+                    'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                ]);
+
+            //get the facilities contact information
+            $sending_facility = static::get_facility_contact_info($data['sending_facility_mflcode']);
+            $receiving_facility = static::get_facility_contact_info($data['receiving_facility_mflcode']);
+
+            // get the message content to be sent
+            if(!empty($sending_facility[0]['telephone']) && !empty($receiving_facility[0]['telephone']))
+            {
+                $message = Message::firstWhere('message_type', 'transfer_in');
+                $msg = $message['message_content'];
+
+                $message_params = array(
+                                            "www" => $data['CCC_NUMBER'],
+                                            "xxx" => $receiving_facility[0]['name'],
+                                            "yyy" => $receiving_facility[0]['telephone'],
+
+                                        );
+
+                $msg = static::message_formulate($msg,$message_params);
+                $source  = '40149'; //env('SMS_SERVICE_KEY', '');
+
+                //send the sms notifications
+                static::send_sms($source, $sending_facility[0]['telephone'], $msg);
+            }
+
+        }else{
+            //capture the silent transfer in
+            $transfer_in = Referral::create([
+                'ccc_no' => $data['CCC_NUMBER'],
+                'referral_type' => 'Silent',
+                'initiation_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                'initiator_mfl_code' => $data['receiving_facility_mflcode'],
+                'reffered_mfl_code' => null,
                 'transfer_status' => $data['transfer_status'],
-                'acceptance_date' => date('Y-m-d'),
-                // 'acceptance_date' => $data['to_acceptance_date'] == '' ? null : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                'transfer_intent' => $data['transfer_intent'],
+                'transfer_priority' => $data['transfer_priority'],
+                'supporting_info' => null,
+                'created_date' => date('Y-m-d'),
+                'updated_date' => date('Y-m-d'),
             ]);
 
+        }
+
         return  $transfer_in;
+    }
+
+    public static function get_facility_contact_info($mfl_code)
+    {
+        return Facility::
+        join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+        ->leftJoin('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
+        ->select('tbl_master_facility.code','tbl_master_facility.name',DB::raw("IFNULL(tbl_master_facility.facility_type,'') as facility_type"),DB::raw("IFNULL(tbl_location_details.telephone,'') as telephone"))
+        ->where('tbl_master_facility.code',$mfl_code)
+        ->where('tbl_location_details.location_type',1)
+        ->orderBy('tbl_master_facility.name', 'asc')
+        ->distinct()
+        ->get();
+    }
+
+    public static function message_formulate($msg,$params)
+    {
+        foreach($params as $key => $val)
+        {
+            $msg = str_replace("$key","$val",$msg);
+        }
+        return $msg;
+    }
+
+    public static function send_sms($source, $destination, $message)
+    {
+
+        $key = "2aYBQWzHwvp6l0JsCHgxVt8s91A"; //env('SMS_SERVICE_KEY', '');
+        $host = "https://sms-service.kenyahmis.org/api/sender";// env('SMS_SERVICE_HOST', '');
+
+
+
+        $httpresponse = Http::
+                                withoutVerifying()
+                                ->withHeaders(['api-token'=> "$key"])
+                                ->post("$host", [
+                                        'destination' => $destination,
+                                        'msg' => $message,
+                                        'sender_id' => $destination,
+                                        'gateway' => $source,
+                                    ]);
+
+       return json_decode( $httpresponse->getBody(), true);
+
     }
 
 

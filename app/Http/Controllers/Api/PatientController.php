@@ -109,7 +109,7 @@ class PatientController extends Controller
             $data['death_indicator']= $patientData["PATIENT_IDENTIFICATION"]["DEATH_INDICATOR"];
             $data['service_request'] = $discontinuation_message["SERVICE_REQUEST"];
 
-            $person[] = Helper::DiscontinuationStore($data);
+            $person[] = Helper::DiscontinuationStore($data,$patientData);
         }
         else if($message_type == 'SIU^S21') //Process patient discontinuation
         {
@@ -118,6 +118,8 @@ class PatientController extends Controller
             $data['sending_facility_mflcode'] = $enrollment_message["SENDING_FACILITY_MFLCODE"];
             $data['receiving_facility_mflcode'] = $enrollment_message["RECEIVING_FACILITY_MFLCODE"];
             $data['transfer_status'] = $enrollment_message["TRANSFER_STATUS"];
+            $data['transfer_intent'] = $enrollment_message["TRANSFER_INTENT"];
+            $data['transfer_priority'] = $enrollment_message["TRANSFER_PRIORITY"];
             $data['to_acceptance_date'] = $enrollment_message["TO_ACCEPTANCE_DATE"];
 
             $person[] = Helper::TransferInStore($data);
@@ -157,20 +159,31 @@ class PatientController extends Controller
     //get transfers in listing
     public function transfers_in(Request $request)
     {
+        $response = array();
         $mfl_code = $request->route('mflcode');
+        $created_at = date('Y-m-d',strtotime($request->route('createdAt')));
 
         $referral = Referral::
                     join('tbl_patient', 'tbl_refferal.ccc_no', '=', 'tbl_patient.ccc_no')
                     ->join('tbl_person', 'tbl_patient.person_id', '=', 'tbl_person.person_id')
                     ->join('tbl_master_facility', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_master_facility.code')
-                    ->select('tbl_refferal.initiator_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.initiation_date','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
+                    ->select('tbl_refferal.created_at','tbl_refferal.supporting_info as data')
                     ->where('tbl_refferal.reffered_mfl_code', $mfl_code)
-                    ->orderBy('tbl_refferal.initiation_date', 'asc')
-                    ->orderBy('tbl_master_facility.name', 'asc')
+                    ->where('tbl_refferal.transfer_status', 'ACTIVE')
+                    ->where('tbl_refferal.created_at','>=', $created_at)
+                    ->orderBy('tbl_refferal.created_at', 'asc')
                     ->distinct()
                     ->get();
+        foreach($referral as $row)
+        {
+            $response[] = json_decode($row['data'],true);
+        }
 
-        return response()->json(['status' =>"success",'message'=>$referral]);
+        return response()->json(['status' =>"success",'message'=>$response]);
+
+        /*
+            ->select('tbl_refferal.initiator_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.initiation_date','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
+        */
     }
 
     //get transfer out status

@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post("/patients", [PatientController::class, "register"]);
-Route::get("/patients/transfer-in/{mflcode}", [PatientController::class, "transfers_in"]);
+Route::get("/patients/transfer-in/{mflcode}/{createdAt}", [PatientController::class, "transfers_in"]);
 Route::get("/patients/referral-status/{mflcode}/{patients}", [PatientController::class, "referral_status"]);
 Route::get("/directory/{code}/{name}", [DataController::class, "directory"]);
 Route::get("/patient/{cccno}/regimen", [DataController::class, "patient_regimen"]);
