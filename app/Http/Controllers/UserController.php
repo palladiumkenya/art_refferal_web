@@ -32,9 +32,31 @@ class UserController extends Controller
             ->select('tbl_master_facility.code', 'tbl_master_facility.name')
             ->orderBy('tbl_master_facility.name', 'ASC')
             ->get();
-        $partners = Partner::all();
+       // $partners = Partner::all();
         $agencies = Agency::all();
-        $roles = Role::all();
+        
+
+        switch (Auth::user()->role_id) {
+            case 1:
+                $roles = Role::all();
+                $partners = Partner::all();
+               // $ = Partner::where('id',Auth::user()->partner_id);
+                break;
+            case 2:
+                $roles = Role::whereIn('id', [3,2])->get(); // Only Show Roles for Level Below the Person who is creating account
+                $partners = Partner::where('partner_id','=',Auth::user()->partner_id)->get();
+                //print_r($partners); exit();
+               // $partners = Partner::all();
+                break;
+            case 3:
+               $roles = Role::whereIn('id', [3])->get(); // Only Show Roles for Level Below the Person who is creating account
+               $partners = Partner::where('partner_id','=',Auth::user()->partner_id)->get();
+              break;
+              case 4:
+                $roles = Role::whereIn('id', [4])->get(); // Only Show Roles for Level Below the Person who is creating account
+            break;
+          }
+       
         return view('users.adduser', compact('facilities', 'partners', 'agencies', 'roles'));
     }
 
@@ -131,6 +153,8 @@ class UserController extends Controller
                 )
                 ->where('users.is_active', '=', '1')
                 ->get();
+                $roles = Role::all();
+
         }
         if (Auth::user()->role_id == '2') {
             $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
@@ -153,6 +177,8 @@ class UserController extends Controller
                 ->where('users.is_active', '=', '1')
                 ->where('users.partner_id', Auth::user()->partner_id)
                 ->get();
+                $roles = Role::whereIn('id', [3,2])->get(); // Only Show Roles for Level Below the Person who is creating account
+
         }
         if (Auth::user()->role_id == '3') {
             $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
@@ -170,11 +196,14 @@ class UserController extends Controller
                     'users.role_id',
                     'users.agency_id',
                     'users.partner_id',
-                    'users.mfl_code'
+                    'users.mfl_code',
+                    'users.mfl_code as code'
                 )
                 ->where('users.is_active', '=', '1')
                 ->where('users.mfl_code', Auth::user()->mfl_code)
                 ->get();
+                $roles = Role::whereIn('id', [3])->get(); // Only Show Roles for Level Below the Person who is creating account
+
         }
         if (Auth::user()->role_id == '3') {
             $user = User::join('tbl_provider', 'users.person_id', '=', 'tbl_provider.person_id')
@@ -192,11 +221,15 @@ class UserController extends Controller
                     'users.role_id',
                     'users.agency_id',
                     'users.partner_id',
-                    'users.mfl_code'
+                    'users.mfl_code',
+                    'users.mfl_code as code'
                 )
                 ->where('users.is_active', '=', '1')
                 ->where('users.agency_id', Auth::user()->agency_id)
                 ->get();
+
+                $roles = Role::whereIn('id', [3])->get(); // Only Show Roles for Level Below the Person who is creating account
+
         }
 
 
@@ -206,7 +239,8 @@ class UserController extends Controller
             ->get();
         $partners = Partner::all();
         $agencies = Agency::all();
-        $roles = Role::all();
+       
+       //print_r(Auth::user()->partner_id); exit();
 
         return view('users.user', compact('user', 'facilities', 'roles', 'agencies', 'partners'));
     }

@@ -61,7 +61,10 @@ class DashboardController extends Controller
             $partners = Partner::all();
             $counties = County::join('tbl_master_facility', 'tbl_county.id', '=', 'tbl_master_facility.county_id')
                 ->join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                ->where('tbl_location.partner_id', Auth::user()->partner_id)
                 ->select('tbl_county.id', 'tbl_county.name')->get();
+             $counties = $counties->unique('name');
+
         }
         if (Auth::user()->role_id == '3') {
             $transfers = Referral::select(
@@ -85,6 +88,7 @@ class DashboardController extends Controller
                 ->get();
             $partners = Partner::all();
             $counties = County::all();
+           
         }
 
         return view('dashboard.dashboardv1', compact('transfers', 'patients', 'providers', 'partners', 'counties', 'facilities'));
@@ -277,12 +281,12 @@ class DashboardController extends Controller
             $patients = Patient::select('tbl_patient.ccc_no')->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
 
             $facility_transfers = ReferralData::select(
-                'facility',
+                'initiator_mfl_code',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
-                ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
+                ->groupBy('initiator_mfl_code')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $partner_transfers = ReferralData::select(
                 'partner',
@@ -330,13 +334,13 @@ class DashboardController extends Controller
                 ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
 
             $facility_transfers = ReferralData::select(
-                'facility',
+                'initiator_mfl_code',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('partner_id', Auth::user()->partner_id)
-                ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
+                ->groupBy('initiator_mfl_code')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $partner_transfers = ReferralData::select(
                 'partner',
@@ -381,13 +385,13 @@ class DashboardController extends Controller
                 ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
 
             $facility_transfers = ReferralData::select(
-                'facility',
+                'initiator_mfl_code',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->where('facility_mfl', Auth::user()->mfl_code)
-                ->groupBy('facility')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
+                ->groupBy('initiator_mfl_code')->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
             $partner_transfers = ReferralData::select(
                 'partner',

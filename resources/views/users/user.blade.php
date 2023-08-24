@@ -137,10 +137,11 @@
                                         <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    
                                     <div class="col-md-6 form-group mb-3" id="mflcode_div">
                                         <label for="mflcode">Facility</label>
                                         <select class="form-control" data-width="100%" id="mflcode" name="mflcode">
-                                            <option value="">Please select </option>
+                                            <option value="">Please select facility </option>
                                             @if (count($facilities) > 0)
                                             @foreach($facilities as $facility)
                                             <option value="{{$facility->code }}" {{ $facility->code == old('mflcode',$user->code) ? 'selected' : ''}}>{{ ucwords($facility->name) }}</option>

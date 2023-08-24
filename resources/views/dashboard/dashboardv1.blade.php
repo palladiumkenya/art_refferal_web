@@ -13,9 +13,9 @@
     <form role="form" method="post" action="#" id="dataFilter">
         {{ csrf_field() }}
         <div class="row">
-            <div class="col">
+        <div class="col col-3 col-md-3">
                 <div class="form-group">
-                    <select class="form-control select2" id="partners" name="partner">
+                    <select class="form-control select2" id="partners" name="partner" style="width:100%;">
                         <option></option>
                         @foreach ($partners as $partner)
                         <option value="{{ $partner->partner_id }}">{{ ucwords($partner->partner_name) }}</option>
@@ -23,9 +23,9 @@
                     </select>
                 </div>
             </div>
-            <div class="col">
+            <div class="col col-3 col-md-3">
                 <div class="form-group">
-                    <select id="counties" name="county">
+                    <select id="counties" name="county"- style="width:100%;">
                         <option></option>
                         @foreach ($counties as $county)
                         <option value="{{ $county->id }}">{{ ucwords($county->name) }}</option>
@@ -33,20 +33,20 @@
                     </select>
                 </div>
             </div>
-            <div class="col">
+            <div class="col col-3 col-md-3">
                 <div class="form-group">
-                    <select id="facilities" name="facility">
+                    <select id="facilities" name="facility" style="width:100%;">
                         <option></option>
                         @foreach ($facilities as $facility)
-                        <option value="{{ $facility->code }}">{{ ucwords($facility->name) }}</option>
+                        <option value="{{ $facility->code }}">{{ ucwords($facility->name.' - '.$facility->code) }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            <div class="col">
+            <div class="col col-3 col-md-3">
 
                 <div class="form-group">
-                    <input class="form-control" id="daterange" type="text" name="daterange" />
+                    <input class="form-control" id="daterange" type="text" name="daterange" style="width:100%;" />
                 </div>
                 <div class="form-group">
                     <label for="daterange" class="col-form-label"></label>
@@ -63,9 +63,9 @@
         {{ csrf_field() }}
         <div class="row">
 
-            <div class="col">
+            <div class="col col-3 col-md-3">
                 <div class="form-group">
-                    <select id="counties" name="county">
+                    <select id="counties" name="county" style="width:100%;">
                         <option></option>
                         @foreach ($counties as $county)
                         <option value="{{ $county->id }}">{{ ucwords($county->name) }}</option>
@@ -73,17 +73,17 @@
                     </select>
                 </div>
             </div>
-            <div class="col">
+            <div class="col col-3 col-md-3">
                 <div class="form-group">
-                    <select id="facilities" name="facility">
+                    <select id="facilities" name="facility" style="width:100%;">
                         <option></option>
                         @foreach ($facilities as $facility)
-                        <option value="{{ $facility->code }}">{{ ucwords($facility->name) }}</option>
+                        <option value="{{ $facility->code }}">{{ ucwords($facility->name.' - '.$facility->code) }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            <div class="col">
+            <div class="col col-6 col-md-6">
 
                 <div class="form-group">
                     <input class="form-control" id="daterange" type="text" name="daterange" />
