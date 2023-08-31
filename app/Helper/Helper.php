@@ -21,6 +21,11 @@ class Helper
     public function PatientStore($data)
     {
         $person = array();
+        //Only proccess records with CCC Number Set
+        if(isset($data['CCC_NUMBER']))
+        {
+        
+
 
         //check if the patient exists
         if (DB::table('tbl_patient')
@@ -123,12 +128,21 @@ class Helper
             }
 
         return  $person;
+        }else{
+
+            return  $person; 
+
+        }
 
     }
 
     public function AppointmentStore($data)
     {
         $person = array();
+        //Only proccess records with CCC Number Set
+        if(isset($data['CCC_NUMBER']))
+        {
+   
 
         //check if the patient exists
         if (DB::table('tbl_patient')
@@ -167,6 +181,12 @@ class Helper
             }
 
         return  $person;
+
+        }else{
+
+            return  $person;
+            
+        }
 
     }
 
