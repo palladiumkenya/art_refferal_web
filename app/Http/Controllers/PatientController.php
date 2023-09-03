@@ -230,7 +230,9 @@ class PatientController extends Controller
                 ->join('tbl_master_facility', 'tbl_patient_observations.mfl_code', '=', 'tbl_master_facility.code')
                 ->where('tbl_patient_observations.patient_id', '=', $row->patient_id)
                 ->select('tbl_patient_observations.*', 'tbl_master_facility.name as facility')
+                ->orderBy('tbl_patient_observations.tca', 'DESC')
                 ->get();
+
             $refferals =  DB::table('tbl_refferal as a')
                 ->join('tbl_patient as b', 'a.ccc_no', '=', 'b.ccc_no')
                 ->leftJoin('tbl_master_facility as c', 'a.initiator_mfl_code', '=', 'c.code')
@@ -316,7 +318,7 @@ class PatientController extends Controller
             'tca' => date('Y-m-d', strtotime($request->get('tca_new'))),
         ]);
 
-        if ($observation) {
+        if ($referral) {
             Alert::success('Success', 'You\'ve successfully added a new observation record');
             return back();
         } else {
