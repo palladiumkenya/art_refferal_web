@@ -55,12 +55,17 @@ class PatientController extends Controller
         $data['date_enrolled_in_facility'] = empty($patientData["PATIENT_VISIT"]) ? null : $patientData["PATIENT_VISIT"]["HIV_CARE_ENROLLMENT_DATE"];
         $data['tca'] = null;
         $data['visit_date'] = null;
+        $data['visit_type'] = null;
         $data['viral_load'] = null;
         $data['regimen'] = null;
         $data['initiation_date']= null;
         $data['acceptance_date']= null;
         $data['last_vl_date']= null;
         $data['drug_days']= null;
+        $data['who_stage']= null;
+        $data['height']= null;
+        $data['weight']= null;
+        $data['observation_date']= null;
 
         $message_type = $patientData["MESSAGE_HEADER"]["MESSAGE_TYPE"];
 
@@ -69,6 +74,7 @@ class PatientController extends Controller
             {
                 $data['tca'] = $appointment['APPOINTMENT_DATE'];
                 $data['visit_date'] = $appointment['VISIT_DATE'];
+                $data['visit_type'] = $appointment['APPOINTMENT_TYPE'];
             }
         }
 
@@ -87,8 +93,34 @@ class PatientController extends Controller
                         case "ART_START":
                             $data['art_start_date'] = $obs['OBSERVATION_VALUE'];
                         break;
+                        case "START_REGIMEN":
+                            $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                        break;
                         case "CURRENT_REGIMEN":
                             $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "CURRENT REGIMEN":
+                            $data['regimen'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "WHO_STAGE":
+                            $data['who_stage'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "WHO STAGE":
+                            $data['who_stage'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "START_HEIGHT":
+                            $data['height'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "HEIGHT":
+                            $data['height'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "START_WEIGHT":
+                            $data['weight'] = $obs['OBSERVATION_VALUE'];
+                            $data['observation_date'] = $obs['OBSERVATION_DATETIME'];
+                        break;
+                        case "WEIGHT":
+                            $data['weight'] = $obs['OBSERVATION_VALUE'];
+                            $data['observation_date'] = $obs['OBSERVATION_DATETIME'];
                         break;
                 }
             }

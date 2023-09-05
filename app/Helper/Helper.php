@@ -9,6 +9,7 @@ use App\Models\Person;
 use App\Models\Patient;
 use App\Models\PatientFacility;
 use App\Models\PatientObservation;
+use App\Models\PatientBMI;
 use App\Models\PatientDiscontinuation;
 use App\Models\Referral;
 use App\Models\Message;
@@ -21,14 +22,15 @@ class Helper
     public function PatientStore($data)
     {
         $person = array();
+        $patient_id = 0;
         //Only proccess records with CCC Number Set
         if(isset($data['CCC_NUMBER']))
         {
-        
 
 
-        //check if the patient exists
-        if (DB::table('tbl_patient')
+
+            //check if the patient exists
+            if (DB::table('tbl_patient')
             ->where('ccc_no', $data['CCC_NUMBER'])
             ->doesntExist())
             {
@@ -52,6 +54,7 @@ class Helper
                 ]);
 
                 //create patient observation
+                $patient_id = $patient['patient_id'];
                 PatientObservation::create([
                     'patient_id' => $patient['patient_id'],
                     'mfl_code' => $data['mfl_code'],
@@ -59,6 +62,7 @@ class Helper
                     'regimen' => $data['regimen'],
                     'tca' => date('Y-m-d', strtotime($data['tca'])),
                     'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
+                    'visit_type' => $data['visit_type'],
                 ]);
 
                 //create patient facility
@@ -83,6 +87,8 @@ class Helper
                     'lastname' => $data['lastname'],
                 ]);
 
+                $patient_id = $rec['patient_id'];
+
                 $patient = Patient::where('patient_id', $rec['patient_id'])
                 ->update([
                     'gender' => $data['gender'],
@@ -97,42 +103,57 @@ class Helper
                 if(is_null($data['regimen']))
                 {
                      //Update Regimen if Exists and has been set
-                    PatientObservation::where('patient_id', $rec['patient_id'])
-                    ->update([
-                        'mfl_code' => $data['mfl_code'],
-                       //'viral_load' => $data['viral_load'],
-                        'tca' => date('Y-m-d', strtotime($data['tca'])),
-                        'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
-                    ]);
+                     PatientObservation::updateOrCreate(
+                        ['patient_id' =>  $rec['patient_id']],
+                        [
+                            'mfl_code' => $data['mfl_code'],
+                           //'viral_load' => $data['viral_load'],
+                            'tca' => date('Y-m-d', strtotime($data['tca'])),
+                            'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
+                            'visit_type' => $data['visit_type'],
+                        ]
+                    );
                 }else
                 {
-                    PatientObservation::where('patient_id', $rec['patient_id'])
-                    ->update([
-                        'mfl_code' => $data['mfl_code'],
-                        'viral_load' => $data['viral_load'],
-                        'regimen' => $data['regimen'],
-                         'tca' => date('Y-m-d', strtotime($data['tca'])),
-                         'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
-                    ]);
+                    PatientObservation::updateOrCreate(
+                        ['patient_id' =>  $rec['patient_id']],
+                        [
+                            'mfl_code' => $data['mfl_code'],
+                            'viral_load' => $data['viral_load'],
+                            'regimen' => $data['regimen'],
+                             'tca' => date('Y-m-d', strtotime($data['tca'])),
+                             'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
+                             'visit_type' => $data['visit_type'],
+                        ]
+                    );
 
                 }
 
                 if( !(is_null($data['date_enrolled_in_facility'])) )
                 {
-                    PatientFacility::where('patient_id', $rec['patient_id'])
-                    ->update([
-                        'mfl_code' => $data['mfl_code'],
-                        'from_date' => $data['date_enrolled_in_facility'] == '' ? null : date('Y-m-d', strtotime($data['date_enrolled_in_facility'])),
-                    ]);
+                    PatientFacility::updateOrCreate(
+                        ['patient_id' =>  $rec['patient_id']],
+                        [
+                            'mfl_code' => $data['mfl_code'],
+                            'from_date' => $data['date_enrolled_in_facility'] == '' ? null : date('Y-m-d', strtotime($data['date_enrolled_in_facility'])),
+                        ]
+                    );
                 }
             }
 
-        return  $person;
-        }else{
-
-            return  $person; 
+            if( !(is_null($data['weight'])) && !(is_null($data['height'])) )
+            {
+                //capture the patient's bmi
+                $observation_date = trim($data['observation_date']) == '' ? null : date('Y-m-d', strtotime($data['observation_date']));
+                $bmi = PatientBMI::updateOrCreate(
+                    ['patient_id' => $patient_id, 'observation_date' => $observation_date],
+                    ['weight' => $data['weight'], 'height' => $data['height']]
+                );
+            }
 
         }
+
+        return  $person;
 
     }
 
@@ -142,51 +163,43 @@ class Helper
         //Only proccess records with CCC Number Set
         if(isset($data['CCC_NUMBER']))
         {
-   
-
-        //check if the patient exists
-        if (DB::table('tbl_patient')
-            ->where('ccc_no', $data['CCC_NUMBER'])
-            ->exists())
-            {
-                //update existing patient record
-                $rec = Patient::firstWhere('ccc_no', $data['CCC_NUMBER']);
-
-                $patient = Patient::where('patient_id', $rec['patient_id'])
-                ->update([
-                    'gender' => $data['gender'],
-                    'ccc_no' => $data['CCC_NUMBER'],
-                    'patient_clinic_no' => $data['CCC_NUMBER'],
-                    'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
-                    'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
-                    //'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
-                    'msidn' => $data['phone_no'],
-                ]);
-
-                //Update TCA
-                PatientObservation::where('patient_id', $rec['patient_id'])
-                ->update([
-                    'mfl_code' => $data['mfl_code'],
-                    'viral_load' => $data['viral_load'],
-                    'regimen' => $data['regimen'],
-                    'tca' => date('Y-m-d', strtotime($data['tca'])),
-                    'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
-                ]);
 
 
-            }
-            else
-            {
+            //check if the patient exists
+            if (DB::table('tbl_patient')
+                ->where('ccc_no', $data['CCC_NUMBER'])
+                ->exists())
+                {
+                    //update existing patient record
+                    $rec = Patient::firstWhere('ccc_no', $data['CCC_NUMBER']);
 
-            }
+                    $patient = Patient::where('patient_id', $rec['patient_id'])
+                    ->update([
+                        'gender' => $data['gender'],
+                        'ccc_no' => $data['CCC_NUMBER'],
+                        'patient_clinic_no' => $data['CCC_NUMBER'],
+                        'upi' => empty($data["NUPI"]) ? null : $data['NUPI'],
+                        'date_of_birth' => $data['date_of_birth'] == '' ? null : date('Y-m-d', strtotime($data['date_of_birth'])),
+                        //'art_start_date' => date('Y-m-d', strtotime($data['art_start_date'])),
+                        'msidn' => $data['phone_no'],
+                    ]);
+
+                    //Update TCA
+                    PatientObservation::where('patient_id', $rec['patient_id'])
+                    ->update([
+                        'mfl_code' => $data['mfl_code'],
+                        'viral_load' => $data['viral_load'],
+                        'regimen' => $data['regimen'],
+                        'tca' => date('Y-m-d', strtotime($data['tca'])),
+                        'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
+                        'visit_type' => $data['visit_type'],
+                    ]);
+
+
+                }
+        }
 
         return  $person;
-
-        }else{
-
-            return  $person;
-            
-        }
 
     }
 

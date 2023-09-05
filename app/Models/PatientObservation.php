@@ -23,5 +23,6 @@ class PatientObservation extends Model
         'muac',
         'who_stage',
         'tca',
+        'visit_type',
     ];
 }
