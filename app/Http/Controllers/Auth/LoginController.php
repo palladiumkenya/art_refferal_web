@@ -36,7 +36,9 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
-        if (Auth::user()->is_active == '1') {
+        if (Auth::user()->first_access == 'Yes') {
+            return '/user/forgot/password';
+        } else if (Auth::user()->is_active == '1') {
             return '/home';
         } else {
             return '/';
