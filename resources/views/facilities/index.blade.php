@@ -19,6 +19,8 @@
                             <th>No.</th>
                             <th>Facility Name</th>
                             <th>MFL Code</th>
+                            <th>Telephone</th>
+                            <th>Email</th>
                             <th>Partner</th>
                             <th>Action</th>
                         </tr>
@@ -30,13 +32,13 @@
                             <td> {{ $loop->iteration }}</td>
                             <td> {{ $facility->facility }} </td>
                             <td> {{$facility->code}}</td>
+                            <td> {{$facility->telephone}}</td>
+                            <td> {{$facility->email}}</td>
                             <td> {{$facility->partner_name}}</td>
                             <td>
 
-                                
-                                @can('facility-edit')
                                 <button onclick="editFacility({{$facility}});" data-toggle="modal" data-target="#editFacility" type="button" class="btn btn-primary btn-sm">Edit</button>
-                                @endcan
+
                             </td>
                         </tr>
                         @endforeach
@@ -85,6 +87,14 @@
                                             @endif
                                         </select>
                                     </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="telephone">Telephone Number </label>
+                                        <input type="text" class="form-control" id="telephone" name="telephone" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="telephone">
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="email">Email Address </label>
+                                        <input type="text" class="form-control" id="email" name="email" placeholder="email">
+                                    </div>
 
                                 </div>
                                 <button type="submit" class="btn btn-block btn-primary">Submit</button>
@@ -111,14 +121,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script type="text/javascript">
+    function editFacility(facility) {
 
-function editFacility(facility) {
+        $('#facility').val(facility.facility);
+        $('#id').val(facility.code);
+        $('#email').val(facility.email);
+        $('#telephone').val(facility.telephone);
+        $('#partner').val(facility.partner_id);
 
-$('#facility').val(facility.facility);
-$('#id').val(facility.code);
-$('#partner').val(facility.partner_id);
-
-}
+    }
 </script>
 
 @endsection

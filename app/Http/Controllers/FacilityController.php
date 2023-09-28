@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Models\FacilityLocation;
 use App\Models\Facility;
+use App\Models\FacilityLocationDetail;
 use App\Models\Partner;
 use Auth;
 
@@ -27,14 +28,16 @@ class FacilityController extends Controller
         if (Auth::user()->role_id == '1') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
-                ->select('tbl_master_facility.code', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
         }
         if (Auth::user()->role_id == '2') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
-                ->select('tbl_master_facility.code', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->where('tbl_location.partner_id', Auth::user()->partner_id)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
@@ -42,7 +45,8 @@ class FacilityController extends Controller
         if (Auth::user()->role_id == '3') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
-                ->select('tbl_master_facility.code', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->where('tbl_location.mfl_code', Auth::user()->mfl_code)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
@@ -50,15 +54,19 @@ class FacilityController extends Controller
         if (Auth::user()->role_id == '4') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
-                ->select('tbl_master_facility.code', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->join('tbl_partner', 'tbl_partner.partner_id', '=', 'tbl_location.partner_id')
                 ->join('tbl_agency', 'tbl_agency.partner_id', '=', 'tbl_partner.partner_id')
                 ->where('tbl_partner.agency_id', Auth::user()->agency_id)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
         }
-
-        $partners = Partner::all();
+        if (Auth::user()->role_id == '2') {
+            $partners = Partner::all()->where('partner_id', Auth::user()->partner_id);
+        } else {
+            $partners = Partner::all();
+        }
 
         return view('facilities.index', compact('facilities', 'partners'));
     }
@@ -131,9 +139,18 @@ class FacilityController extends Controller
             ->update([
                 'partner_id' => $request->partner,
             ]);
+        $facility_contact = FacilityLocationDetail::join('tbl_location', 'tbl_location_details.location_id', '=', 'tbl_location.location_id')
+            ->where('tbl_location.mfl_code', $request->id)
+            ->update([
+                'telephone' => $request->telephone,
+                'email' => $request->email,
+            ]);
         // dd($facility);
         if ($facility) {
             Alert::success('Success', 'Facility has been successfully mapped');
+            return back();
+        } elseif ($facility_contact) {
+            Alert::success('Success', 'Facility Contact information has been successfully recorded');
             return back();
         } else {
             Alert::error('Failed', 'Save failed');

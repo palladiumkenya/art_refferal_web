@@ -35,9 +35,8 @@
                             <td> {{$user->phone}}</td>
                             <td> {{$user->role}}</td>
                             <td>
-                                @can('user-edit')
+
                                 <button onclick="editUser({{$user}});" data-toggle="modal" data-target="#editUser" type="button" class="btn btn-primary btn-sm">Edit</button>
-                                @endcan
                                 <button onclick="deleteUser({{$user->id}});" type="button" class="btn btn-danger btn-sm">Disable</button>
                                 <button onclick="resetUser({{$user->id}});" type="button" class="btn btn-success btn-sm">Reset</button>
 
@@ -137,7 +136,7 @@
                                         <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6 form-group mb-3" id="mflcode_div">
                                         <label for="mflcode">Facility</label>
                                         <select class="form-control" data-width="100%" id="mflcode" name="mflcode">

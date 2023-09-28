@@ -45,6 +45,11 @@ class UserController extends Controller
             case 2:
                 $roles = Role::whereIn('id', [3, 2])->get(); // Only Show Roles for Level Below the Person who is creating account
                 $partners = Partner::where('partner_id', '=', Auth::user()->partner_id)->get();
+                $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                    ->select('tbl_master_facility.code', 'tbl_master_facility.name')
+                    ->where('tbl_location.partner_id', '=', Auth::user()->partner_id)
+                    ->orderBy('tbl_master_facility.name', 'ASC')
+                    ->get();
                 //print_r($partners); exit();
                 // $partners = Partner::all();
                 break;
@@ -96,19 +101,34 @@ class UserController extends Controller
         ]);
 
         $pid = $person['person_id'];
+        if (Auth::user()->role_id == '2') {
+            $user = User::create([
+                'password' => bcrypt($request->get('email')),
+                'person_id' => $pid,
+                'email' => $request->get('email'),
+                'name' => $request->get('lastname'),
+                'partner_id' => Auth::user()->partner_id,
+                'role_id' => $request->get('role'),
+                'mfl_code' => $request->get('mflcode'),
+                'agency_id' => $request->get('agency'),
+                'msisdn' => $request->get('phone'),
+                'first_access' => 'Yes',
+            ]);
+        } else {
+            $user = User::create([
+                'password' => bcrypt($request->get('email')),
+                'person_id' => $pid,
+                'email' => $request->get('email'),
+                'name' => $request->get('lastname'),
+                'partner_id' => $request->get('partner'),
+                'role_id' => $request->get('role'),
+                'mfl_code' => $request->get('mflcode'),
+                'agency_id' => $request->get('agency'),
+                'msisdn' => $request->get('phone'),
+                'first_access' => 'Yes',
+            ]);
+        }
 
-        $user = User::create([
-            'password' => bcrypt($request->get('email')),
-            'person_id' => $pid,
-            'email' => $request->get('email'),
-            'name' => $request->get('lastname'),
-            'partner_id' => $request->get('partner'),
-            'role_id' => $request->get('role'),
-            'mfl_code' => $request->get('mflcode'),
-            'agency_id' => $request->get('agency'),
-            'msisdn' => $request->get('phone'),
-            'first_access' => 'Yes',
-        ]);
         $provider = Provider::create([
             'mfl_code' => $request->get('mflcode'),
             'msisdn' => $request->get('phone'),
@@ -237,8 +257,33 @@ class UserController extends Controller
             ->select('tbl_master_facility.code', 'tbl_master_facility.name')
             ->orderBy('tbl_master_facility.name', 'ASC')
             ->get();
-        $partners = Partner::all();
+        // $partners = Partner::all();
         $agencies = Agency::all();
+        switch (Auth::user()->role_id) {
+            case 1:
+                $roles = Role::all();
+                $partners = Partner::all();
+                // $ = Partner::where('id',Auth::user()->partner_id);
+                break;
+            case 2:
+                $roles = Role::whereIn('id', [3, 2])->get(); // Only Show Roles for Level Below the Person who is creating account
+                $partners = Partner::where('partner_id', '=', Auth::user()->partner_id)->get();
+                $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
+                    ->select('tbl_master_facility.code', 'tbl_master_facility.name')
+                    ->where('tbl_location.partner_id', '=', Auth::user()->partner_id)
+                    ->orderBy('tbl_master_facility.name', 'ASC')
+                    ->get();
+                //print_r($partners); exit();
+                // $partners = Partner::all();
+                break;
+            case 3:
+                $roles = Role::whereIn('id', [3])->get(); // Only Show Roles for Level Below the Person who is creating account
+                $partners = Partner::where('partner_id', '=', Auth::user()->partner_id)->get();
+                break;
+            case 4:
+                $roles = Role::whereIn('id', [4])->get(); // Only Show Roles for Level Below the Person who is creating account
+                break;
+        }
 
         //print_r(Auth::user()->partner_id); exit();
 
