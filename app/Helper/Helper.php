@@ -294,20 +294,49 @@ class Helper
             //capture the transfer out
             $service_request = $data["service_request"];
 
-            //create transfer record
-            $referral = Referral::create([
-                'ccc_no' => $data['CCC_NUMBER'],
-                'referral_type' => 'Normal',
-                'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
-                'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
-                'reffered_mfl_code' => $service_request['RECEIVING_FACILITY_MFLCODE'],
-                'transfer_status' => $service_request['TRANSFER_STATUS'],
-                'transfer_intent' => $service_request['TRANSFER_INTENT'],
-                'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
-                'supporting_info' => json_encode($patientData),
-                'created_date' => date('Y-m-d'),
-                'updated_date' => date('Y-m-d'),
-            ]);
+            //check if this client has an open silent transfer to the receiving facility
+            if (DB::table('tbl_refferal')
+            ->where('ccc_no', $data['CCC_NUMBER'])
+            ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+            ->whereNull('initiator_mfl_code')
+            ->exists())
+            {
+                //update that transfer record
+                $rec = Referral::Where('ccc_no', $data['CCC_NUMBER'])
+                                ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+                                ->whereNull('initiator_mfl_code')
+                                ->skip(0)
+                                ->take(1)
+                                ->get();
+
+                $referral = Referral::where('refferal_id',$rec['refferal_id'])
+                ->update([
+                        'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
+                        'referral_type' => 'Normal',
+                        'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
+                        'transfer_status' => $data['transfer_status'],
+                        'r_status' => 1 ,
+                        'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                        'supporting_info' => json_encode($patientData),
+                        'updated_date' => date('Y-m-d'),
+                    ]);
+            }else{
+                //create transfer record
+                $referral = Referral::create([
+                    'ccc_no' => $data['CCC_NUMBER'],
+                    'referral_type' => 'Normal',
+                    'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
+                    'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
+                    'reffered_mfl_code' => $service_request['RECEIVING_FACILITY_MFLCODE'],
+                    'transfer_status' => $service_request['TRANSFER_STATUS'],
+                    'transfer_intent' => $service_request['TRANSFER_INTENT'],
+                    'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
+                    'supporting_info' => json_encode($patientData),
+                    'created_date' => date('Y-m-d'),
+                    'updated_date' => date('Y-m-d'),
+                ]);
+            }
+
 
             //get the facilities contact information
             $sending_facility = static::get_facility_contact_info($service_request['SENDING_FACILITY_MFLCODE']);
@@ -357,6 +386,7 @@ class Helper
             ->where('transfer_status', 'ACTIVE')
             ->update([
                     'transfer_status' => $data['transfer_status'],
+                    'r_status' => 1 ,
                     'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
                 ]);
 
@@ -390,12 +420,14 @@ class Helper
                 'ccc_no' => $data['CCC_NUMBER'],
                 'referral_type' => 'Silent',
                 'initiation_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
-                'initiator_mfl_code' => $data['receiving_facility_mflcode'],
-                'reffered_mfl_code' => null,
+                'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                'initiator_mfl_code' => null,
+                'reffered_mfl_code' => $data['receiving_facility_mflcode'],
                 'transfer_status' => $data['transfer_status'],
                 'transfer_intent' => $data['transfer_intent'],
                 'transfer_priority' => $data['transfer_priority'],
                 'supporting_info' => null,
+                'r_status' => 1 ,
                 'created_date' => date('Y-m-d'),
                 'updated_date' => date('Y-m-d'),
             ]);
