@@ -297,13 +297,13 @@ class Helper
             //check if this client has an open silent transfer to the receiving facility
             if (DB::table('tbl_refferal')
             ->where('ccc_no', $data['CCC_NUMBER'])
-            ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+            ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
             ->whereNull('initiator_mfl_code')
             ->exists())
             {
                 //update that transfer record
                 $rec = Referral::Where('ccc_no', $data['CCC_NUMBER'])
-                                ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+                                ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
                                 ->whereNull('initiator_mfl_code')
                                 ->skip(0)
                                 ->take(1)
@@ -314,7 +314,7 @@ class Helper
                         'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
                         'referral_type' => 'Normal',
                         'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
-                        'transfer_status' => $data['transfer_status'],
+                        'transfer_status' => $service_request['TRANSFER_STATUS'],
                         'r_status' => 1 ,
                         'supporting_info' => json_encode($patientData),
                         'updated_date' => date('Y-m-d'),
