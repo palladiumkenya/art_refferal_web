@@ -316,7 +316,6 @@ class Helper
                         'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
                         'referral_type' => 'Normal',
                         'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
-                        'transfer_status' => $service_request['TRANSFER_STATUS'],
                         'r_status' => 1 ,
                         'supporting_info' => json_encode($patientData),
                         'updated_date' => date('Y-m-d'),
