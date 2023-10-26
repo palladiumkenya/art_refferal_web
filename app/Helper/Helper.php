@@ -463,7 +463,7 @@ class Helper
     {
 
         $key = "2aYBQWzHwvp6l0JsCHgxVt8s91A"; //env('SMS_SERVICE_KEY', '');
-        $host = "https://sms-service.kenyahmis.org/api/sender";// env('SMS_SERVICE_HOST', '');
+        $host = env('SMS_SERVICE_HOST', 'https://sms-service.kenyahmis.org/api/sender'); //"https://sms-service.kenyahmis.org/api/sender";//
 
 
 
