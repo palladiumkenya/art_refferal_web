@@ -316,7 +316,6 @@ class Helper
                         'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? null : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
                         'transfer_status' => $data['transfer_status'],
                         'r_status' => 1 ,
-                        'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
                         'supporting_info' => json_encode($patientData),
                         'updated_date' => date('Y-m-d'),
                     ]);
