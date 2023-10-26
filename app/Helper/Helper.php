@@ -302,14 +302,16 @@ class Helper
             ->exists())
             {
                 //update that transfer record
-                $rec = Referral::Where('ccc_no', $data['CCC_NUMBER'])
-                                ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
-                                ->whereNull('initiator_mfl_code')
-                                ->skip(0)
-                                ->take(1)
-                                ->get();
+                // $rec = Referral::Where('ccc_no', $data['CCC_NUMBER'])
+                //                 ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
+                //                 ->whereNull('initiator_mfl_code')
+                //                 ->skip(0)
+                //                 ->take(1)
+                //                 ->get();
 
-                $referral = Referral::where('refferal_id',$rec['refferal_id'])
+                $referral = Referral::where('ccc_no', $data['CCC_NUMBER'])
+                ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
+                ->whereNull('initiator_mfl_code')
                 ->update([
                         'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
                         'referral_type' => 'Normal',
