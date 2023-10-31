@@ -318,23 +318,32 @@ class Helper
                         'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? $effective_discontinuation_date : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
                         'r_status' => 1 ,
                         'supporting_info' => json_encode($patientData),
-                        'updated_date' => date('Y-m-d'),
+                        'updated_date' => date('Y-m-d H:i:s'),
                     ]);
             }else{
-                //create transfer record
-                $referral = Referral::create([
-                    'ccc_no' => $data['CCC_NUMBER'],
-                    'referral_type' => 'Normal',
-                    'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? $effective_discontinuation_date : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
-                    'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
-                    'reffered_mfl_code' => $service_request['RECEIVING_FACILITY_MFLCODE'],
-                    'transfer_status' => $service_request['TRANSFER_STATUS'],
-                    'transfer_intent' => $service_request['TRANSFER_INTENT'],
-                    'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
-                    'supporting_info' => json_encode($patientData),
-                    'created_date' => date('Y-m-d'),
-                    'updated_date' => date('Y-m-d'),
-                ]);
+                if (DB::table('tbl_refferal')
+                ->where('ccc_no', $data['CCC_NUMBER'])
+                ->where('reffered_mfl_code', $service_request['RECEIVING_FACILITY_MFLCODE'])
+                ->where('initiator_mfl_code', $service_request['SENDING_FACILITY_MFLCODE'])
+                ->where('initiation_date', date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])))
+                ->doesntExist())
+                {
+                    //create transfer record
+                    $referral = Referral::create([
+                        'ccc_no' => $data['CCC_NUMBER'],
+                        'referral_type' => 'Normal',
+                        'initiation_date' => $service_request['TRANSFER_OUT_DATE'] == '' ? $effective_discontinuation_date : date('Y-m-d', strtotime($service_request['TRANSFER_OUT_DATE'])),
+                        'initiator_mfl_code' => $service_request['SENDING_FACILITY_MFLCODE'],
+                        'reffered_mfl_code' => $service_request['RECEIVING_FACILITY_MFLCODE'],
+                        'transfer_status' => $service_request['TRANSFER_STATUS'],
+                        'transfer_intent' => $service_request['TRANSFER_INTENT'],
+                        'transfer_priority' => $service_request['TRANSFER_PRIORITY'],
+                        'supporting_info' => json_encode($patientData),
+                        'created_date' => date('Y-m-d H:i:s'),
+                        'updated_date' => date('Y-m-d H:i:s'),
+                    ]);
+                }
+
             }
 
 
@@ -428,8 +437,8 @@ class Helper
                 'transfer_priority' => $data['transfer_priority'],
                 'supporting_info' => null,
                 'r_status' => 1 ,
-                'created_date' => date('Y-m-d'),
-                'updated_date' => date('Y-m-d'),
+                'created_date' => date('Y-m-d H:i:s'),
+                'updated_date' => date('Y-m-d H:i:s'),
             ]);
 
         }
