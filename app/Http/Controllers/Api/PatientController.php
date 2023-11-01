@@ -193,7 +193,8 @@ class PatientController extends Controller
     {
         $response = array();
         $mfl_code = $request->route('mflcode');
-        $created_at = date('Y-m-d',strtotime($request->route('createdAt')));
+        $created_at = date('Y-m-d H:i:s',strtotime($request->route('createdAt')));
+        $pull_timestamp ="";
 
         $referral = Referral::
                     join('tbl_patient', 'tbl_refferal.ccc_no', '=', 'tbl_patient.ccc_no')
@@ -202,16 +203,21 @@ class PatientController extends Controller
                     ->select('tbl_refferal.created_at','tbl_refferal.supporting_info as data')
                     ->where('tbl_refferal.reffered_mfl_code', $mfl_code)
                     ->where('tbl_refferal.transfer_status', 'ACTIVE')
-                    ->where('tbl_refferal.created_at','>=', $created_at)
+                    ->where('tbl_refferal.created_at','>', $created_at)
                     ->orderBy('tbl_refferal.created_at', 'asc')
                     ->distinct()
                     ->get();
         foreach($referral as $row)
         {
+            $pull_timestamp = date('YmdHis', strtotime($row['created_at']));
             $response[] = json_decode($row['data'],true);
         }
 
-        return response()->json(['status' =>"success",'message'=>$response]);
+        return response()->json([
+                                    'status' =>"success",
+                                    "pull_timestamp"=>$pull_timestamp,
+                                    'message'=>$response
+                                ]);
 
         /*
             ->select('tbl_refferal.initiator_mfl_code as mfl_code','tbl_master_facility.name as facility_name','tbl_refferal.initiation_date','tbl_refferal.ccc_no','tbl_person.firstname','tbl_person.middlename','tbl_person.lastname',DB::raw("IFNULL(tbl_refferal.initiation_date,'') as initiation_date"),DB::raw("IFNULL(tbl_refferal.appointment_date,'') as appointment_date"),DB::raw("IFNULL(tbl_refferal.viral_load,'') as viral_load"),DB::raw("IFNULL(tbl_refferal.last_vl_date,'') as last_vl_date"),DB::raw("IFNULL(tbl_refferal.current_regimen,'') as current_regimen"),DB::raw("IFNULL(tbl_refferal.drug_days,'') as drug_days"),DB::raw("IFNULL(tbl_refferal.transfer_status,'') as transfer_status"),DB::raw("IFNULL(tbl_refferal.transfer_intent,'') as transfer_intent"),DB::raw("IFNULL(tbl_refferal.transfer_priority,'') as transfer_priority"))
