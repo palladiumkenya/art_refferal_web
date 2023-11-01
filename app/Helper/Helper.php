@@ -342,35 +342,37 @@ class Helper
                         'created_date' => date('Y-m-d H:i:s'),
                         'updated_date' => date('Y-m-d H:i:s'),
                     ]);
+
+                    //get the facilities contact information
+                    $sending_facility = static::get_facility_contact_info($service_request['SENDING_FACILITY_MFLCODE']);
+                    $receiving_facility = static::get_facility_contact_info($service_request['RECEIVING_FACILITY_MFLCODE']);
+
+                    // get the message content to be sent
+                    if(!empty($sending_facility[0]['telephone']) && !empty($receiving_facility[0]['telephone']))
+                    {
+                        $message = Message::firstWhere('message_type', 'transfer_out');
+                        $msg = $message['message_content'];
+
+                        $message_params = array(
+                                                    "www" => $data['CCC_NUMBER'],
+                                                    "xxx" => $sending_facility[0]['name'],
+                                                    "yyy" => $sending_facility[0]['telephone'],
+                                                    "zzz" => $effective_discontinuation_date,
+
+                                                );
+
+                        $msg = static::message_formulate($msg,$message_params);
+                        $source  = '40149'; //env('SMS_SERVICE_KEY', '');
+
+                        //send the sms notifications
+                        static::send_sms($source, $receiving_facility[0]['telephone'], $msg);
+                    }
                 }
 
             }
 
 
-            //get the facilities contact information
-            $sending_facility = static::get_facility_contact_info($service_request['SENDING_FACILITY_MFLCODE']);
-            $receiving_facility = static::get_facility_contact_info($service_request['RECEIVING_FACILITY_MFLCODE']);
 
-            // get the message content to be sent
-            if(!empty($sending_facility[0]['telephone']) && !empty($receiving_facility[0]['telephone']))
-            {
-                $message = Message::firstWhere('message_type', 'transfer_out');
-                $msg = $message['message_content'];
-
-                $message_params = array(
-                                            "www" => $data['CCC_NUMBER'],
-                                            "xxx" => $sending_facility[0]['name'],
-                                            "yyy" => $sending_facility[0]['telephone'],
-                                            "zzz" => $effective_discontinuation_date,
-
-                                        );
-
-                $msg = static::message_formulate($msg,$message_params);
-                $source  = '40149'; //env('SMS_SERVICE_KEY', '');
-
-                //send the sms notifications
-                static::send_sms($source, $receiving_facility[0]['telephone'], $msg);
-            }
 
         }
 
