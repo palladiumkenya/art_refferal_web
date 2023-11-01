@@ -17,4 +17,4 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
          cd ${{ secrets.PATH }}
-         sudo git pull 
+         sudo git pull origin development
