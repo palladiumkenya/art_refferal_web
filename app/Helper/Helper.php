@@ -426,22 +426,30 @@ class Helper
             }
 
         }else{
-            //capture the silent transfer in
-            $transfer_in = Referral::create([
-                'ccc_no' => $data['CCC_NUMBER'],
-                'referral_type' => 'Silent',
-                'initiation_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
-                'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
-                'initiator_mfl_code' => null,
-                'reffered_mfl_code' => $data['receiving_facility_mflcode'],
-                'transfer_status' => $data['transfer_status'],
-                'transfer_intent' => $data['transfer_intent'],
-                'transfer_priority' => $data['transfer_priority'],
-                'supporting_info' => null,
-                'r_status' => 1 ,
-                'created_date' => date('Y-m-d H:i:s'),
-                'updated_date' => date('Y-m-d H:i:s'),
-            ]);
+
+            if (DB::table('tbl_refferal')
+                ->where('ccc_no', $data['CCC_NUMBER'])
+                ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
+                ->where('transfer_status', 'Silent')
+                ->doesntExist())
+            {
+                //capture the silent transfer in
+                $transfer_in = Referral::create([
+                    'ccc_no' => $data['CCC_NUMBER'],
+                    'referral_type' => 'Silent',
+                    'initiation_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                    'acceptance_date' => $data['to_acceptance_date'] == '' ? date('Y-m-d') : date('Y-m-d', strtotime($data['to_acceptance_date'])),
+                    'initiator_mfl_code' => null,
+                    'reffered_mfl_code' => $data['receiving_facility_mflcode'],
+                    'transfer_status' => $data['transfer_status'],
+                    'transfer_intent' => $data['transfer_intent'],
+                    'transfer_priority' => $data['transfer_priority'],
+                    'supporting_info' => null,
+                    'r_status' => 1 ,
+                    'created_date' => date('Y-m-d H:i:s'),
+                    'updated_date' => date('Y-m-d H:i:s'),
+                ]);
+            }
 
         }
 
