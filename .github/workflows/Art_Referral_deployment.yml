@@ -1,7 +1,7 @@
 name: deploy to a test instance
 on:
   push:
-    branches: [ master ]
+    branches: [ development ]
 jobs:
 
   build:
@@ -17,4 +17,4 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
          cd ${{ secrets.PATH }}
-         sudo git pull 
+         sudo git pull origin development
