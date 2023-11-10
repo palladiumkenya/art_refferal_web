@@ -430,7 +430,7 @@ class Helper
             if (DB::table('tbl_refferal')
                 ->where('ccc_no', $data['CCC_NUMBER'])
                 ->where('reffered_mfl_code', $data['receiving_facility_mflcode'])
-                ->where('transfer_status', 'Silent')
+                ->where('referral_type', 'Silent')
                 ->doesntExist())
             {
                 //capture the silent transfer in
