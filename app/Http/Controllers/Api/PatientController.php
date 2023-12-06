@@ -228,7 +228,7 @@ class PatientController extends Controller
     public function referral_status(Request $request)
     {
         $mfl_code = $request->route('mflcode');
-        $patients = explode(',',(base64_decode($request->route('patients'))));
+        $patients = explode(',',str_replace(' ','',base64_decode($request->route('patients'))));
 
         $referral = Referral::
                     join('tbl_patient', 'tbl_refferal.ccc_no', '=', 'tbl_patient.ccc_no')
