@@ -25,4 +25,4 @@ Route::get("/patients/transfer-in/{mflcode}/{createdAt}", [PatientController::cl
 Route::get("/patients/referral-status/{mflcode}/{patients}", [PatientController::class, "referral_status"]);
 Route::get("/directory/{code?}/{name?}", [DataController::class, "directory"]);
 Route::get("/patient/{cccno}/regimen", [DataController::class, "patient_regimen"]);
-Route::get("/facility/directory", [DataController::class, "facility_directory"]);
+Route::get("/facility/directory/{code?}/{name?}", [DataController::class, "facility_directory"]);
