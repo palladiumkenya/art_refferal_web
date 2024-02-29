@@ -9,4 +9,11 @@ class FacilityLocationDetail extends Model
 {
     use HasFactory;
     public $table = 'tbl_location_details';
+    public $timestamps = false;
+    protected $fillable = [
+        'location_id',
+        'location_type',
+        'telephone',
+        'email'
+    ];
 }

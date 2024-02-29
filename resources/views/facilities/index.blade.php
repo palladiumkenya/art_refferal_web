@@ -70,6 +70,7 @@
                                 {{ csrf_field() }}
                                 <div class="row">
                                     <input type="hidden" name="id" id="id">
+                                    <input type="hidden" name="location_id" id="location_id">
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="facility">Facility Name </label>
@@ -85,6 +86,14 @@
                                             <option value="{{$partner->partner_id }}">{{ ucwords($partner->partner_name) }}</option>
                                             @endforeach
                                             @endif
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="location_type">Clinic Type</label>
+                                        <select class="form-control" id="location_type" name="location_type" onchange="updateTelephone()">
+                                            @foreach($locationType as $locationType)
+                                            <option value="{{ $locationType->id }}">{{ $locationType->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6 form-group mb-3">
@@ -128,8 +137,47 @@
         $('#email').val(facility.email);
         $('#telephone').val(facility.telephone);
         $('#partner').val(facility.partner_id);
+        $('#location_id').val(facility.location_id);
+
+        console.log(facility.location_id);
 
     }
+
+    function updateTelephone() {
+        var locationType = $('#location_type').val();
+        var facilityCode = $('#id').val();
+        var locationID = $('#location_id').val();
+
+        console.log(locationID);
+
+
+        $.ajax({
+            url: '/location_type',
+            type: 'GET',
+            data: {
+                location_type: locationType,
+                facility_code: facilityCode,
+                location_id: locationID
+            },
+            success: function(data) {
+                $('#telephone').val(data.telephone);
+                console.log(data);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+    // function updateTelephone() {
+    //     var locationType = $('#location_type').val();
+
+
+    //     if (facility.location_type == 1) {
+    //         $('#telephone').val(facility.telephone);
+    //     } else if (facility.location_type == 2) {
+    //         $('#telephone').val(facility.telephone);
+    //     }
+    // }
 </script>
 
 @endsection

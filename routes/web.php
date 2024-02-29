@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/referral', ['uses' => 'App\Http\Controllers\ReferralController@referral', 'as' => 'referral']);
     Route::post('/facilities/update', ['uses' => 'App\Http\Controllers\FacilityController@update', 'as' => 'facilities.update']);
+    Route::get('/location_type', ['uses' => 'App\Http\Controllers\FacilityController@location_type', 'as' => 'location_type']);
 });
 // Route::group(['middleware' => 'auth'], function () {
 
