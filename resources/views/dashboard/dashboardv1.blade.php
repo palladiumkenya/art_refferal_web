@@ -162,7 +162,6 @@
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers Out</p>
                     <p id="transfer_out" class="text-primary text-24 line-height-1 mb-2"></p>
-                    <!-- <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p> -->
                 </div>
             </div>
         </div>
