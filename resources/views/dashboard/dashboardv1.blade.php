@@ -373,8 +373,8 @@
                     ]
                 });
             }
-            console.log(data.patients);
-            console.log(data);
+            // console.log(data.patients);
+            // console.log(data);
         }
     });
 
@@ -535,7 +535,7 @@
             }]
         });
     }
-   
+
     if (authenticated == '1') {
         function partnerTransfer(data) {
             let partner = [];

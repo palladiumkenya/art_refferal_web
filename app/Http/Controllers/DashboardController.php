@@ -30,7 +30,7 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             )
                 ->get();
-            $patients = Patient::all();
+            $patients = Patient::take(1000)->get();
             $partners = Partner::all();
             $counties = County::all();
             $providers = Provider::all();
