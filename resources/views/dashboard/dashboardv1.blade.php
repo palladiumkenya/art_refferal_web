@@ -131,18 +131,6 @@
         </div>
     </div>
 
-    <!-- <div class="col-lg-2 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center">
-                <i class="i-Doctor"></i>
-                <div class="content">
-                    <p class="text-muted mt-2 mb-0">Providers</p>
-                    <p class="text-primary text-24 line-height-1 mb-2">{{number_format(count($providers))}}</p>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center">
@@ -162,7 +150,6 @@
                 <div class="content">
                     <p class="text-muted mt-2 mb-0">Transfers Out</p>
                     <p id="transfer_out" class="text-primary text-24 line-height-1 mb-2"></p>
-                    <!-- <p class="text-primary text-24 line-height-1 mb-2">{{ number_format(json_decode($transfers->isEmpty() ? 0 : $transfers[0]->transfer_out)) }}</p> -->
                 </div>
             </div>
         </div>
@@ -373,8 +360,6 @@
                     ]
                 });
             }
-            console.log(data.patients);
-            console.log(data);
         }
     });
 
@@ -471,7 +456,7 @@
             transfer_out.push(Number(data[i].transfer_out));
             transit.push(Number(data[i].transit));
         }
-        console.log(data);
+
 
         Highcharts.chart('month_transfer', {
             chart: {
@@ -535,7 +520,7 @@
             }]
         });
     }
-   
+
     if (authenticated == '1') {
         function partnerTransfer(data) {
             let partner = [];
