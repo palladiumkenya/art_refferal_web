@@ -360,6 +360,8 @@
                     ]
                 });
             }
+            // console.log(data.patients);
+            // console.log(data);
         }
     });
 

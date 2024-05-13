@@ -19,16 +19,18 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Auth::user()->role_id = 1;
-        // dd(config('database'));
+        ini_set("max_execution_time", "-1");
+        ini_set("memory_limit", "-1");
+        set_time_limit(0);
+
         if (Auth::user()->role_id == '1') {
-            // $transfers = Referral::select(
-            //     DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-            //     DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
-            //     DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
-            // )
-            //     ->get();
-            // $patients = Patient::all();
+            $transfers = Referral::select(
+                DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
+                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
+            )
+                ->get();
+            $patients = Patient::take(1000)->get();
             $partners = Partner::all();
             $counties = County::all();
             // $providers = Provider::all();
