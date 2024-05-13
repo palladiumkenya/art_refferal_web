@@ -9,6 +9,7 @@ use App\Models\Person;
 use App\Models\Patient;
 use App\Models\PatientFacility;
 use App\Models\PatientObservation;
+use App\Models\PatientViralLoad;
 use App\Models\PatientBMI;
 use App\Models\PatientDiscontinuation;
 use App\Models\Referral;
@@ -58,8 +59,8 @@ class Helper
                 PatientObservation::create([
                     'patient_id' => $patient['patient_id'],
                     'mfl_code' => $data['mfl_code'],
-                    'viral_load' => $data['viral_load'],
                     'regimen' => $data['regimen'],
+                    'who_stage' => $data['who_stage'],
                     'tca' => date('Y-m-d', strtotime($data['tca'])),
                     'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                     'visit_type' => $data['visit_type'],
@@ -107,7 +108,7 @@ class Helper
                         ['patient_id' =>  $rec['patient_id']],
                         [
                             'mfl_code' => $data['mfl_code'],
-                           //'viral_load' => $data['viral_load'],
+                            'who_stage' => $data['who_stage'],
                             'tca' => date('Y-m-d', strtotime($data['tca'])),
                             'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                             'visit_type' => $data['visit_type'],
@@ -119,8 +120,8 @@ class Helper
                         ['patient_id' =>  $rec['patient_id']],
                         [
                             'mfl_code' => $data['mfl_code'],
-                            'viral_load' => $data['viral_load'],
                             'regimen' => $data['regimen'],
+                            'who_stage' => $data['who_stage'],
                              'tca' => date('Y-m-d', strtotime($data['tca'])),
                              'visit_date' => date('Y-m-d', strtotime($data['visit_date'])),
                              'visit_type' => $data['visit_type'],
@@ -145,9 +146,21 @@ class Helper
             {
                 //capture the patient's bmi
                 $observation_date = trim($data['observation_date']) == '' ? null : date('Y-m-d', strtotime($data['observation_date']));
+
                 $bmi = PatientBMI::updateOrCreate(
                     ['patient_id' => $patient_id, 'observation_date' => $observation_date],
                     ['weight' => $data['weight'], 'height' => $data['height']]
+                );
+            }
+
+            if( !(is_null($data['viral_load'])) )
+            {
+                //capture the patient's viral load result
+                $viral_load_date = trim($data['viral_load_date']) == '' ? null : date('Y-m-d', strtotime($data['viral_load_date']));
+
+                $vl = PatientViralLoad::updateOrCreate(
+                    ['patient_id' => $patient_id, 'viral_load_date' => $viral_load_date],
+                    ['viral_load' => $data['viral_load']]
                 );
             }
 

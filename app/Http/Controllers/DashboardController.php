@@ -33,30 +33,30 @@ class DashboardController extends Controller
             $patients = Patient::take(1000)->get();
             $partners = Partner::all();
             $counties = County::all();
-            $providers = Provider::all();
+            // $providers = Provider::all();
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->select('tbl_master_facility.code', 'tbl_master_facility.name')
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
         }
         if (Auth::user()->role_id == '2') {
-            $transfers = Referral::join('tbl_location', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_location.mfl_code')
-                ->select(
-                    DB::raw('SUM(CASE WHEN tbl_refferal.referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                    DB::raw('SUM(CASE WHEN tbl_refferal.referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
-                    DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
-                )
-                ->where('tbl_location.partner_id', Auth::user()->partner_id)
-                ->get();
-            $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
-                ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')
-                ->select('tbl_patient.ccc_no')
-                ->where('tbl_location.partner_id', Auth::user()->partner_id)
-                ->get();
-            $providers = Provider::join('tbl_location', 'tbl_provider.mfl_code', '=', 'tbl_location.mfl_code')
-                ->select('tbl_provider.mfl_code')
-                ->where('tbl_location.partner_id', Auth::user()->partner_id)
-                ->get();
+            // $transfers = Referral::join('tbl_location', 'tbl_refferal.initiator_mfl_code', '=', 'tbl_location.mfl_code')
+            //     ->select(
+            //         DB::raw('SUM(CASE WHEN tbl_refferal.referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
+            //         DB::raw('SUM(CASE WHEN tbl_refferal.referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+            //         DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
+            //     )
+            //     ->where('tbl_location.partner_id', Auth::user()->partner_id)
+            //     ->get();
+            // $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
+            //     ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')
+            //     ->select('tbl_patient.ccc_no')
+            //     ->where('tbl_location.partner_id', Auth::user()->partner_id)
+            //     ->get();
+            // $providers = Provider::join('tbl_location', 'tbl_provider.mfl_code', '=', 'tbl_location.mfl_code')
+            //     ->select('tbl_provider.mfl_code')
+            //     ->where('tbl_location.partner_id', Auth::user()->partner_id)
+            //     ->get();
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->select('tbl_master_facility.code', 'tbl_master_facility.name')
                 ->where('tbl_location.partner_id', Auth::user()->partner_id)
@@ -71,21 +71,21 @@ class DashboardController extends Controller
 
         }
         if (Auth::user()->role_id == '3') {
-            $transfers = Referral::select(
-                DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
-                DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
-                DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
-            )
-                ->where('initiator_mfl_code', Auth::user()->mfl_code)
-                ->groupBy('initiator_mfl_code')
-                ->get();
+            // $transfers = Referral::select(
+            //     DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
+            //     DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
+            //     DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
+            // )
+            //     ->where('initiator_mfl_code', Auth::user()->mfl_code)
+            //     ->groupBy('initiator_mfl_code')
+            //     ->get();
 
-            $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
-                ->select('tbl_patient.ccc_no')
-                ->where('tbl_patient_observations.mfl_code', Auth::user()->mfl_code)
-                ->get();
-            $providers = Provider::where('mfl_code', Auth::user()->mfl_code)
-                ->get();
+            // $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
+            //     ->select('tbl_patient.ccc_no')
+            //     ->where('tbl_patient_observations.mfl_code', Auth::user()->mfl_code)
+            //     ->get();
+            // $providers = Provider::where('mfl_code', Auth::user()->mfl_code)
+            //     ->get();
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->select('tbl_master_facility.code', 'tbl_master_facility.name')
                 ->orderBy('tbl_master_facility.name', 'ASC')
@@ -95,7 +95,8 @@ class DashboardController extends Controller
 
         }
 
-        return view('dashboard.dashboardv1', compact('transfers', 'patients', 'providers', 'partners', 'counties', 'facilities'));
+        // dd(Auth::user()->role_id);
+        return view('dashboard.dashboardv1', compact('partners', 'counties', 'facilities'));
     }
 
     public function data()
@@ -108,7 +109,7 @@ class DashboardController extends Controller
                 DB::raw('SUM(CASE WHEN referral_type = "Normal" THEN 1 ELSE 0 END) AS transfer_out'),
                 DB::raw('SUM(CASE WHEN referral_type = "Transit" THEN 1 ELSE 0 END) AS transit')
             );
-            $patients = Patient::select('ccc_no');
+            $patients = Patient::count();
 
             $partner_transfers = ReferralData::select(
                 'partner',
@@ -141,7 +142,7 @@ class DashboardController extends Controller
                 ->groupBy('month');
 
             $data["transfers"] = $transfers->get();
-            $data["patients"] = $patients->count();
+            $data["patients"] = $patients;
             $data["partner_transfers"] = $partner_transfers->get();
             $data["month_transfers"] = $month_transfers->get();
             $data["average_days"] = $average_days->get();
@@ -158,8 +159,7 @@ class DashboardController extends Controller
                 ->where('tbl_location.partner_id', Auth::user()->partner_id);
             $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
                 ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')
-                ->select('tbl_patient.ccc_no')
-                ->where('tbl_location.partner_id', Auth::user()->partner_id);
+                ->where('tbl_location.partner_id', Auth::user()->partner_id)->count();
 
             $facility_transfers = ReferralData::select(
                 'initiator_facility',
@@ -190,7 +190,7 @@ class DashboardController extends Controller
                 ->groupBy('month');
 
             $data["transfers"] = $transfers->get();
-            $data["patients"] = $patients->count();
+            $data["patients"] = $patients;
             $data["facility_transfers"] = $facility_transfers->get();
             $data["month_transfers"] = $month_transfers->get();
             $data["average_days"] = $average_days->get();
@@ -204,8 +204,7 @@ class DashboardController extends Controller
             )
                 ->where('initiator_mfl_code', Auth::user()->mfl_code);
             $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
-                ->select('tbl_patient.ccc_no')
-                ->where('tbl_patient_observations.mfl_code', Auth::user()->mfl_code);
+                ->where('tbl_patient_observations.mfl_code', Auth::user()->mfl_code)->count();
             $facility_transfers = ReferralData::select(
                 'initiator_facility',
                 DB::raw('SUM(CASE WHEN referral_type = "Silent" THEN 1 ELSE 0 END) AS transfer_in'),
@@ -245,7 +244,7 @@ class DashboardController extends Controller
 
 
             $data["transfers"] = $transfers->get();
-            $data["patients"] = $patients->count();
+            $data["patients"] = $patients;
             $data["facility_transfers"] = $facility_transfers->get();
             $data["month_transfers"] = $month_transfers->get();
             $data["average_days"] = $average_days->get();
@@ -282,7 +281,7 @@ class DashboardController extends Controller
             )
                 ->whereDate('initiation_date', '>=', $startdate)->whereDate('initiation_date', '<=', $enddate);
 
-            $patients = Patient::select('tbl_patient.ccc_no')->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
+            $patients = Patient::select('tbl_patient.ccc_no')->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate)->count();
 
             $facility_transfers = ReferralData::select(
                 'initiator_mfl_code',
@@ -335,7 +334,7 @@ class DashboardController extends Controller
                 ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')
                 ->select('tbl_patient.ccc_no')
                 ->where('tbl_location.partner_id', Auth::user()->partner_id)
-                ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
+                ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate)->count();
 
             $facility_transfers = ReferralData::select(
                 'initiator_mfl_code',
@@ -386,7 +385,7 @@ class DashboardController extends Controller
             $patients = Patient::join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
                 ->select('tbl_patient.ccc_no')
                 ->where('tbl_patient_observations.mfl_code', Auth::user()->mfl_code)
-                ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate);
+                ->whereDate('tbl_patient.created_at', '>=', $startdate)->whereDate('tbl_patient.created_at', '<=', $enddate)->count();
 
             $facility_transfers = ReferralData::select(
                 'initiator_mfl_code',
@@ -436,7 +435,7 @@ class DashboardController extends Controller
         if (!empty($selected_partners)) {
             $transfers = $transfers->where('partner_id', $selected_partners);
             $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
-                ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')->where('tbl_location.partner_id', $selected_partners);
+                ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')->where('tbl_location.partner_id', $selected_partners)->count();
             $facility_transfers = $facility_transfers->where('partner_id', $selected_partners);
             $partner_transfers = $partner_transfers->where('partner_id', $selected_partners);
             $month_transfers = $month_transfers->where('partner_id', $selected_partners);
@@ -444,7 +443,7 @@ class DashboardController extends Controller
         }
         if (!empty($selected_facilites)) {
             $transfers = $transfers->where('initiator_mfl_code', $selected_facilites);
-            $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')->where('tbl_patient_observations.mfl_code', $selected_facilites);
+            $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')->where('tbl_patient_observations.mfl_code', $selected_facilites)->count();
             $facility_transfers = $facility_transfers->where('initiator_mfl_code', $selected_facilites);
             $partner_transfers = $partner_transfers->where('initiator_mfl_code', $selected_facilites);
             $month_transfers = $month_transfers->where('initiator_mfl_code', $selected_facilites);
@@ -454,7 +453,7 @@ class DashboardController extends Controller
             $transfers = $transfers->where('county_id', $selected_counties);
             $patients = $patients->join('tbl_patient_observations', 'tbl_patient.patient_id', '=', 'tbl_patient_observations.patient_id')
                 ->join('tbl_location', 'tbl_patient_observations.mfl_code', '=', 'tbl_location.mfl_code')
-                ->join('tbl_master_facility', 'tbl_location.mfl_code', '=', 'tbl_master_facility.code')->where('tbl_master_facility.county_id', $selected_counties);
+                ->join('tbl_master_facility', 'tbl_location.mfl_code', '=', 'tbl_master_facility.code')->where('tbl_master_facility.county_id', $selected_counties)->count();
             $facility_transfers = $facility_transfers->where('county_id', $selected_counties);
             $partner_transfers = $partner_transfers->where('county_id', $selected_counties);
             $month_transfers = $month_transfers->where('county_id', $selected_counties);
@@ -462,7 +461,7 @@ class DashboardController extends Controller
         }
 
         $data["transfers"] = $transfers->get();
-        $data["patients"] = $patients->count();
+        $data["patients"] = $patients;
         $data["facility_transfers"] = $facility_transfers->get();
         $data["partner_transfers"] = $partner_transfers->get();
         $data["month_transfers"] = $month_transfers->get();

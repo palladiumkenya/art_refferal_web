@@ -57,6 +57,7 @@ class PatientController extends Controller
         $data['visit_date'] = null;
         $data['visit_type'] = null;
         $data['viral_load'] = null;
+        $data['viral_load_date'] = null;
         $data['regimen'] = null;
         $data['initiation_date']= null;
         $data['acceptance_date']= null;
@@ -121,6 +122,12 @@ class PatientController extends Controller
                         case "WEIGHT":
                             $data['weight'] = $obs['OBSERVATION_VALUE'];
                             $data['observation_date'] = $obs['OBSERVATION_DATETIME'];
+                        break;
+                        case "LAST LV DATE":
+                            $data['viral_load_date'] = $obs['OBSERVATION_VALUE'];
+                        break;
+                        case "LAST LV RESULT":
+                            $data['viral_load'] = $obs['OBSERVATION_VALUE'];
                         break;
                 }
             }

@@ -8,6 +8,7 @@ use App\Models\FacilityLocation;
 use App\Models\Facility;
 use App\Models\FacilityLocationDetail;
 use App\Models\Partner;
+use App\Models\LocationType;
 use Auth;
 
 class FacilityController extends Controller
@@ -29,38 +30,46 @@ class FacilityController extends Controller
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
                 ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
-                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->select('tbl_master_facility.code', 'tbl_location.location_id', 'tbl_location_details.telephone', 'tbl_location_details.location_type', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->where('tbl_location_details.location_type', 1)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
+            $locationType = LocationType::all();
         }
         if (Auth::user()->role_id == '2') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
                 ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
-                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->select('tbl_master_facility.code', 'tbl_location.location_id', 'tbl_location_details.telephone', 'tbl_location_details.location_type', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->where('tbl_location.partner_id', Auth::user()->partner_id)
+                ->where('tbl_location_details.location_type', 1)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
+            $locationType = LocationType::all();
         }
         if (Auth::user()->role_id == '3') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
                 ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
-                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location.location_id', 'tbl_location_details.location_type', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->where('tbl_location.mfl_code', Auth::user()->mfl_code)
+                ->where('tbl_location_details.location_type', 1)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
+            $locationType = LocationType::all();
         }
         if (Auth::user()->role_id == '4') {
             $facilities = Facility::join('tbl_location', 'tbl_master_facility.code', '=', 'tbl_location.mfl_code')
                 ->leftJoin('tbl_partner', 'tbl_location.partner_id', '=', 'tbl_partner.partner_id')
                 ->join('tbl_location_details', 'tbl_location.location_id', '=', 'tbl_location_details.location_id')
-                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
+                ->select('tbl_master_facility.code', 'tbl_location_details.telephone', 'tbl_location_details.location_type', 'tbl_location_details.email', 'tbl_master_facility.name as facility', 'tbl_partner.partner_name', 'tbl_partner.partner_id')
                 ->join('tbl_partner', 'tbl_partner.partner_id', '=', 'tbl_location.partner_id')
                 ->join('tbl_agency', 'tbl_agency.partner_id', '=', 'tbl_partner.partner_id')
                 ->where('tbl_partner.agency_id', Auth::user()->agency_id)
+                ->where('tbl_location_details.location_type', 1)
                 ->orderBy('tbl_master_facility.name', 'ASC')
                 ->get();
+            $locationType = LocationType::all();
         }
         if (Auth::user()->role_id == '2') {
             $partners = Partner::all()->where('partner_id', Auth::user()->partner_id);
@@ -68,7 +77,7 @@ class FacilityController extends Controller
             $partners = Partner::all();
         }
 
-        return view('facilities.index', compact('facilities', 'partners'));
+        return view('facilities.index', compact('facilities', 'partners', 'locationType'));
     }
 
     /**
@@ -141,10 +150,25 @@ class FacilityController extends Controller
             ]);
         $facility_contact = FacilityLocationDetail::join('tbl_location', 'tbl_location_details.location_id', '=', 'tbl_location.location_id')
             ->where('tbl_location.mfl_code', $request->id)
-            ->update([
+            ->where('tbl_location_details.location_type', $request->location_type)
+            ->first();
+
+
+        if (!$facility_contact) {
+
+            $facility_contact = FacilityLocationDetail::create([
+                'location_id' => $request->location_id,
+                'telephone' => $request->telephone,
+                'email' => $request->email,
+                'location_type' => $request->location_type,
+            ]);
+        } else {
+            // Update the existing record
+            $facility_contact->update([
                 'telephone' => $request->telephone,
                 'email' => $request->email,
             ]);
+        }
         // dd($facility);
         if ($facility) {
             Alert::success('Success', 'Facility has been successfully mapped');
@@ -157,6 +181,26 @@ class FacilityController extends Controller
             return back();
         }
     }
+    public function location_type(Request $request)
+    {
+        $locationType = $request->get('location_type');
+        $facilityCode = $request->get('facility_code');
+        // dd($locationType);
+        $result = FacilityLocationDetail::leftJoin('tbl_location', 'tbl_location_details.location_id', '=', 'tbl_location.location_id')
+            ->where('tbl_location_details.location_type', $locationType)
+            ->where('tbl_location.mfl_code', $facilityCode)
+            ->select('tbl_location_details.telephone', 'tbl_location_details.location_id')
+            ->first();
+
+        if ($result) {
+            return response()->json(['telephone' => $result->telephone, 'location_id' => $result->location_id]);
+        } else {
+            // Use the actual location_id from the edit form
+            return response()->json(['telephone' => null, 'location_id' => $request->location_id]);
+        }
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
