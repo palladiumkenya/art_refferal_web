@@ -5,15 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FacilityLocation extends Model
+class FacilitySearchRating extends Model
 {
     use HasFactory;
-    public $table = 'tbl_location';
-    protected $primaryKey = 'location_id';
+
+    public $table = 'tbl_facility_search_ratings';
 
     protected $fillable = [
-        'mfl_code',
-        'partner_id',
-        'is_active'
+        'mfl_code', 'rating', 'comment'
     ];
 }

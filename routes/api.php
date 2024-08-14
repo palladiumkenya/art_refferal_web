@@ -26,3 +26,5 @@ Route::get("/patients/referral-status/{mflcode}/{patients}", [PatientController:
 Route::get("/directory/{code?}/{name?}", [DataController::class, "directory"]);
 Route::get("/patient/{cccno}/regimen", [DataController::class, "patient_regimen"]);
 Route::get("/facility/directory/{code?}/{name?}", [DataController::class, "facility_directory"]);
+Route::post("/facility/directory/edit", [DataController::class, "facility_update"]);
+Route::post("/facility/directory/rating", [DataController::class, "facility_directory_rating"]);

@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Person;
+use App\Models\Partner;
 use App\Models\Patient;
 use App\Models\Facility;
 use App\Models\FacilityLocation;
 use App\Models\FacilityLocationDetail;
+use App\Models\LocationType;
+use App\Models\FacilitySearchRating;
 
 class DataController extends Controller
 {
@@ -58,5 +61,58 @@ class DataController extends Controller
         $directory = DB::select('CALL sp_facility_directory(?, ?)', [$code, $name]);
 
         return response()->json(['status' => "success", 'message' => $directory]);
+    }
+
+    public function facility_directory_rating(Request $request)
+    {
+        $facilityRankingData = $request->all();
+
+        $mflcode = $facilityRankingData['mflcode'];
+        $rating = $facilityRankingData['rating'];
+        $comment = $facilityRankingData['comment'];
+
+        // Save the rating
+        FacilitySearchRating::create([
+            'mfl_code' => $mflcode,
+            'rating' => $rating,
+            'comment' => $comment,
+        ]);
+
+        return response()->json(['status' => "success", 'message' => $facilityRankingData]);
+    }
+
+    public function facility_update(Request $request)
+    {
+        $facilityData = $request->all();
+
+        $mflcode = $facilityData['mflcode'];
+        $ccc_phone = $facilityData['ccc_phone'];
+        $pmtct_phone = $facilityData['pmtct_phone'];
+
+        //create the facility location
+        $facility_location = FacilityLocation::updateOrCreate(
+            ['mfl_code' => $mflcode],
+            ['is_active' => 1]
+        );
+
+        // $phone_numbers = [
+        //                    ["location_id" => $facility_location['location_id'],"location_type" => "1","telephone" => $ccc_phone],
+        //                    ["location_id" => $facility_location['location_id'],"location_type" => "2","telephone" => $pmtct_phone]
+        //                 ];
+
+        //capture the location details
+        FacilityLocationDetail::updateOrCreate(
+            ['location_id' => $facility_location['location_id'],'location_type' => 1],
+            ['telephone' => "$ccc_phone"]
+        );
+
+        FacilityLocationDetail::updateOrCreate(
+            ['location_id' => $facility_location['location_id'],'location_type' => 2],
+            ['telephone' => "$pmtct_phone"]
+        );
+
+        // FacilityLocationDetail::upsert($phone_numbers, ['location_id', 'location_type','telephone'], ['telephone']);
+
+        return response()->json(['status' => "success", 'message' => 'Location details captured successfully']);
     }
 }
