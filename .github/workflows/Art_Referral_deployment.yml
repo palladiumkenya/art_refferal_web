@@ -16,5 +16,5 @@ jobs:
         key: ${{ secrets.CICD2_SECRET }}
         port: ${{ secrets.PORT }}
         script: |
-         cd ${{ secrets.PATH }}
+         cd /var/www/art_refferal_web
          sudo git pull origin development
